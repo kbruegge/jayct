@@ -7,7 +7,11 @@ package hexmap;
  */
 public class CameraGeometry {
 
+    /**
+     * The number of pixels in this camera.
+     */
     public int numberOfPixel;
+
 
     public double[] pixelXPositions;
     public double[] pixelYPositions;
@@ -24,8 +28,6 @@ public class CameraGeometry {
 
     public int[][] neighbours;
 
-    TelescopeType telescopeType;
-
     public String name;
 
 
@@ -40,22 +42,6 @@ public class CameraGeometry {
 
         PixelType(String geometry) {
             this.geometry = geometry;
-        }
-    }
-
-
-    /**
-     * The telescope type this camera belongs to.
-     */
-    public enum TelescopeType {
-        SST("SST"),
-        MST("MST"),
-        LST("LST");
-
-        String type;
-
-        TelescopeType(String type) {
-            this.type = type;
         }
     }
 

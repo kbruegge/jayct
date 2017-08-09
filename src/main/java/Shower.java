@@ -1,5 +1,5 @@
 import com.google.common.collect.Sets;
-import hexmap.CameraMapping;
+import hexmap.TelescopeArray;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import java.util.HashSet;
  */
 public class Shower implements Serializable {
 
-    private static final CameraMapping mapping = CameraMapping.getInstance();
+    private static final TelescopeArray mapping = TelescopeArray.cta();
 
     public final HashSet<SignalPixel> signalPixels = new HashSet<>();
 

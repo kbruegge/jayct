@@ -23,8 +23,8 @@ import java.util.Map;
  *
  * Created by kbruegge on 2/13/17.
  */
-public class CameraMapping {
-    private static Logger log = LoggerFactory.getLogger(CameraMapping.class);
+public class TelescopeArray {
+    private static Logger log = LoggerFactory.getLogger(TelescopeArray.class);
 
     //see https://github.com/google/guava/wiki/ReflectionExplained for info
     private static final Type CAMERA_DEF = new TypeToken<HashMap<String, CameraGeometry>>() {}.getType();
@@ -34,7 +34,7 @@ public class CameraMapping {
     /**
      * Singleton instance containing information about cameras' geometry and telescope definition
      */
-    private static CameraMapping mapping;
+    private static TelescopeArray mapping;
 
     /**
      * Map with camera geometries (value) for different cameras (key).
@@ -50,10 +50,10 @@ public class CameraMapping {
      * Retrieve the singleton instance of the camera mapping which contains geometry data for the
      * cameras and definition of the telescopes
      */
-    public synchronized static CameraMapping getInstance() {
+    public synchronized static TelescopeArray cta() {
         if (mapping == null) {
             try {
-                mapping = new CameraMapping();
+                mapping = new TelescopeArray();
             } catch (FileNotFoundException e) {
                 log.error("Could not load array or camera definitions from files. Do they exist?");
                 throw new InstantiationError();
@@ -62,18 +62,18 @@ public class CameraMapping {
         return mapping;
     }
 
-    private CameraMapping() throws FileNotFoundException {
+    private TelescopeArray() throws FileNotFoundException {
         Gson gson = new GsonBuilder().
                 setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-        Class cl = CameraGeometry.class;
+        Class cl = TelescopeArray.class;
 
         // initialize geometry for the cameras
-        final InputStream cameraDefs = cl.getResourceAsStream("/hexmap/cta_camera_definitions.json");
+        final InputStream cameraDefs = cl.getResourceAsStream("/camera_definitions/cta_camera_definitions.json");
         InputStreamReader reader = new InputStreamReader(cameraDefs);
         this.cameras = gson.fromJson(reader, CAMERA_DEF);
 
         // initialize definition for the telescopes
-        final InputStream arrayDef = cl.getResourceAsStream("/hexmap/cta_array_definition.json");
+        final InputStream arrayDef = cl.getResourceAsStream("/array_definitions/cta_array_definition.json");
         reader = new InputStreamReader(arrayDef);
         this.telescopes = gson.fromJson(reader, ARRAY_DEF);
     }

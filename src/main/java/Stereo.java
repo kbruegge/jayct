@@ -1,5 +1,7 @@
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import hexmap.TelescopeArray;
+import hexmap.TelescopeDefinition;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -29,6 +31,7 @@ import static java.lang.Math.*;
  */
 public class Stereo{
 
+    private static final TelescopeArray MAPPING = TelescopeArray.cta();
 
     /**
      * Convert in-camera coordinates to direction vectors in 3D-space.
@@ -41,15 +44,15 @@ public class Stereo{
      * @param cameraRotation rotation of the camera within the telescope housing in radians
      * @return a direction vector, (x,y,z), corresponding to the direction of the given point in the camera
      */
-    static double[] cameraCoordinateToDirectionVector
-        (
-                double x,
-                double y,
-                double phi,
-                double theta,
-                double focalLength,
-                double cameraRotation
-        ){
+    private static double[] cameraCoordinateToDirectionVector
+    (
+            double x,
+            double y,
+            double phi,
+            double theta,
+            double focalLength,
+            double cameraRotation
+    ){
 
         //angle between x-axis of camera and the line connecting 0,0 with x,y
         double alpha = atan2(y, x);
@@ -73,7 +76,7 @@ public class Stereo{
      * @param angleInRadians the angle by which to rotate
      * @return an array [x,y,z] encoding the rotated vector.
      */
-    static double[] rotateAroundAxis(double[] vector, double[] axis, double angleInRadians){
+    private static double[] rotateAroundAxis(double[] vector, double[] axis, double angleInRadians){
         Vector3D v = new Vector3D(vector);
         Vector3D ax = new Vector3D(axis);
 
@@ -99,37 +102,36 @@ public class Stereo{
      * @param theta pointing theta angle of a telescope
      * @return a direction vector of length 1
      */
-    static double[] cartesianFromPolar(double phi, double theta){
+    private static double[] cartesianFromPolar(double phi, double theta){
         double x = sin(theta) * cos(phi);
         double y = sin(theta) * sin(phi);
         double z = cos(theta);
         return new double[] {x, y, z};
     }
 
-    public static class StereoParameters {
-        final double[] estimatedDirection;
-        final double[] estimatedImpactPosition;
+    final double[] estimatedDirection;
+    final double[] estimatedImpactPosition;
 
-        public StereoParameters(double[] estimatedDirection,
-                                double[] estimatedImpactPosition) {
+    private Stereo(double[] estimatedDirection,
+                  double[] estimatedImpactPosition) {
 
-            this.estimatedDirection = estimatedDirection;
-            this.estimatedImpactPosition = estimatedImpactPosition;
-        }
+        this.estimatedDirection = estimatedDirection;
+        this.estimatedImpactPosition = estimatedImpactPosition;
+    }
 
-        public double  getDirectionX(){
-            return estimatedDirection[0];
-        }
-        public double  getDirectionY(){
-            return estimatedDirection[1];
-        }
-        public double  getDirectionZ(){
-            return estimatedDirection[2];
-        }
+    public double  getDirectionX(){
+        return estimatedDirection[0];
+    }
+    public double  getDirectionY(){
+        return estimatedDirection[1];
+    }
+    public double  getDirectionZ(){
+        return estimatedDirection[2];
     }
 
 
-    public StereoParameters process(List<Moments> parameters, double altitude, double azimuth) {
+
+    public static Stereo fromParameters(List<Moments> parameters, double altitude, double azimuth) {
 
         //get pointing information from data stream. while these variables have different names
         // I hope.
@@ -144,7 +146,7 @@ public class Stereo{
 
         double[] corePosition = estimateCorePosition(planes);
 
-        return new StereoParameters(direction, corePosition);
+        return new Stereo(direction, corePosition);
     }
 
     /**
@@ -152,7 +154,7 @@ public class Stereo{
      * @param planes planes for each telescope in the event
      * @return an array [x, y] giving a point on the surface
      */
-    private double[] estimateCorePosition(List<Plane> planes){
+    private static double[] estimateCorePosition(List<Plane> planes){
         int n = planes.size();
 
         double[][] mat = new double[n][2];
@@ -194,7 +196,7 @@ public class Stereo{
      * @param planes the plane objects for each Telescope
      * @return an array [x, y, z]
      */
-    private double[] estimateDirection(List<Plane> planes){
+    private static double[] estimateDirection(List<Plane> planes){
 
         // get all combinations of size 2 in a rather inelegant way.
         List<List<Plane>> tuples = new ArrayList<>();
@@ -242,8 +244,7 @@ public class Stereo{
      * and direction can be reconstructed.
      *
      */
-    static class Plane {
-        static final CameraMapping MAPPING = CameraMapping.getInstance();
+    private static class Plane {
         //the telescope id this reconstructed plane belongs to
         final int telescopeId;
         //the weight given to the plane
@@ -261,11 +262,7 @@ public class Stereo{
         Plane(double phi, double theta, Moments p) {
             this.telescopeId = p.telescopeID;
 
-            //common prefix for all keys.
-            final String prefix = "telescope:" + p.telescopeID + ":shower:";
-
-
-            TelescopeDefinition tel = MAPPING.telescopeFromId(id);
+            TelescopeDefinition tel = MAPPING.telescopeFromId(this.telescopeId);
 
             //get two points on the shower axis
             double pX = p.meanX + p.length * cos(p.delta);
