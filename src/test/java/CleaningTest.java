@@ -19,7 +19,7 @@ public class CleaningTest {
         ImageReader events = ImageReader.fromURL(url);
         ImageReader.Event e = events.next();
 
-        List<Shower> showers = TailCut.selectShowersFromEvent(e);
+        List<Shower> showers = TailCut.collectShowersFromEvent(e);
 
         assertTrue(showers.size() >= 2);
 

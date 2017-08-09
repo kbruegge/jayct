@@ -1,7 +1,6 @@
 package io;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Iterables;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,9 +19,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 
 /**
+ * Opens cta events stored in JSON files (or json.gz)
  * Uses GSON to map the events stored in JSON format Maps Java classes.
  * Created by mackaiver on 09/08/17.
  */
@@ -89,8 +91,8 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
      * Saving the type of the primary particle might also be useful.
      */
     public class MC {
-        double energy, alt, az, coreY, coreX;
-        String type;
+        public double energy, alt, az, coreY, coreX;
+        public String type;
 
         @Override
         public String toString() {
@@ -112,20 +114,44 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
         public int numTriggeredTelescopes;
     }
 
+    /**
+     * Creates an ImageReader from a {@link Path} object pointing to a file somewhere in the filesystem
+     * @param path the path to open
+     * @return the imagereader
+     * @throws IOException in case the file cannot be accessed/read
+     */
     public static ImageReader fromPath(Path path) throws IOException {
         return new ImageReader(Files.newInputStream(path));
     }
 
+
+    /**
+     * Creates an ImageReader from a string encoding a path somewehre on the filesystem
+     * @param path the path to open
+     * @return the imagereader
+     * @throws IOException in case the file cannot be accessed/read
+     */
     public static ImageReader fromPathString(String path) throws IOException {
         return new ImageReader(Files.newInputStream(Paths.get(path)));
     }
 
+    /**
+     * Creates an ImageReader from an URL
+     * @param url the url to open
+     * @return the imagereader
+     * @throws IOException in case the url cannot be accessed/read
+     */
     public static ImageReader fromURL(URL url) throws IOException {
         return new ImageReader(url.openStream());
     }
 
+    public Stream<Event> stream(){
+        return StreamSupport.stream(this.spliterator(), false);
+    }
+
 
     private ImageReader(InputStream inputStream) throws IOException {
+        //see https://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped
         PushbackInputStream pb = new PushbackInputStream(inputStream, 2 ); //we need a pushbackstream to look ahead
 
         byte [] signature = new byte[2];//read the signature
@@ -133,6 +159,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
         pb.unread( signature, 0, len); //push back the signature to the stream
 
         //check if matches standard gzip magic number
+        // see https://en.wikipedia.org/wiki/Gzip#File_format
         if( signature[ 0 ] == (byte) 0x1f && signature[ 1 ] == (byte) 0x8b ) {
             inputStream = new GZIPInputStream(pb);
         }

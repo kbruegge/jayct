@@ -1,7 +1,9 @@
 import io.ImageReader;
 
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A heuristic to find signal pixels in the image. Its based on a ideas from the equivalent
@@ -16,17 +18,24 @@ public class TailCut{
      */
     public static Double[] levels = {10.0, 8.0, 4.5};
 
-    public static List<Shower> selectShowersFromEvent(ImageReader.Event event){
-        return event.images
-                .entrySet()
-                .parallelStream()
-                .map(entry -> selectShowerFromImage(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+    public static List<Shower> collectShowersFromEvent(ImageReader.Event event){
+        return selectShowersInEvent(event).collect(Collectors.toList());
+    }
+    public static<A, R> R collectShowersFromEvent(ImageReader.Event event, Collector<Shower, A, R> col){
+        return selectShowersInEvent(event).collect(col);
     }
 
-    public static Shower selectShowerFromImage(int cameraId, double[] image) {
 
-        Shower shower = new Shower(cameraId);
+    public static Stream<Shower> selectShowersInEvent(ImageReader.Event event){
+        return event.images
+                .entrySet()
+                .stream()
+                .map(entry -> selectShowerFromImage(event.eventId, entry.getKey(), entry.getValue()));
+    }
+
+    public static Shower selectShowerFromImage(long eventId, int cameraId, double[] image) {
+
+        Shower shower = new Shower(cameraId, eventId);
 
         //add the pixels over the first threshold
         for (int pixelId = 0; pixelId < image.length; pixelId++) {

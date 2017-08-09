@@ -1,3 +1,5 @@
+import com.google.common.base.MoreObjects;
+
 import static java.lang.Math.*;
 
 /**
@@ -10,7 +12,8 @@ import static java.lang.Math.*;
 public class Moments {
 
 
-    private Moments(int telescopeID, double width, double length, double delta, double skewness, double kurtosis, double phi, double miss, double r, double meanX, double meanY, double size) {
+    private Moments(long eventId, int telescopeID, double width, double length, double delta, double skewness, double kurtosis, double phi, double miss, double r, double meanX, double meanY, double size) {
+        this.eventId = eventId;
         this.telescopeID = telescopeID;
         this.width = width;
         this.length = length;
@@ -29,7 +32,7 @@ public class Moments {
         return calculate(shower);
     }
 
-
+    public final long eventId;
     public final int telescopeID;
 
     public final double width;
@@ -44,6 +47,23 @@ public class Moments {
     public final double meanY;
     public final double size;
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("telescopeID", telescopeID)
+                .add("width", width)
+                .add("length", length)
+                .add("delta", delta)
+                .add("skewness", skewness)
+                .add("kurtosis", kurtosis)
+                .add("phi", phi)
+                .add("miss", miss)
+                .add("r", r)
+                .add("meanX", meanX)
+                .add("meanY", meanY)
+                .add("size", size)
+                .toString();
+    }
 
     private static Moments calculate(Shower shower) {
 
@@ -108,6 +128,6 @@ public class Moments {
         double kurtosis = (kurtosis_a / size) / pow(kurtosis_b / size, 2);
 
 
-        return new Moments(shower.cameraId, width, length, delta, skewness, kurtosis, phi, miss, r, meanX, meanY, size);
+        return new Moments(shower.eventId, shower.cameraId, width, length, delta, skewness, kurtosis, phi, miss, r, meanX, meanY, size);
     }
 }

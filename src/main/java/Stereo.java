@@ -131,7 +131,7 @@ public class Stereo{
 
 
 
-    public static Stereo fromParameters(List<Moments> parameters, double altitude, double azimuth) {
+    public static Stereo fromMoments(List<Moments> parameters, double altitude, double azimuth) {
 
         //get pointing information from data stream. while these variables have different names
         // I hope.

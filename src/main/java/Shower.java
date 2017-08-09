@@ -19,13 +19,16 @@ public class Shower implements Serializable {
     public final HashSet<SignalPixel> signalPixels = new HashSet<>();
 
     public final int cameraId;
+    public final long eventId;
 
     /**
      * Each camera (in one event) can have exactly one shower object.
      * @param cameraId the id of the camera which recorded the image.
+     * @param eventId the unique event id this shower belongs to.
      */
-    public Shower(int cameraId) {
+    public Shower(int cameraId, long eventId) {
         this.cameraId = cameraId;
+        this.eventId = eventId;
     }
 
     /**
