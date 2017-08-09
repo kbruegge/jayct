@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Test Array definitions.
  * Created by mackaiver on 09/08/17.
  */
 public class ApiTests {

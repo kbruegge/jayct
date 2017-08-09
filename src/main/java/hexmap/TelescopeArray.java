@@ -42,7 +42,7 @@ public class TelescopeArray {
     private final Map<String, CameraGeometry> cameras;
 
     /**
-     * List of various defined telescopes.
+     * List of the telescopes that make up the array.
      */
     private final ArrayList<TelescopeDefinition> telescopes;
 

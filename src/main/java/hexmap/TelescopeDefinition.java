@@ -41,7 +41,7 @@ public class TelescopeDefinition {
      */
     public final double telescopePositionZ;
 
-    public TelescopeDefinition(double opticalFocalLength,
+    private TelescopeDefinition(double opticalFocalLength,
                                String cameraName,
                                TelescopeType telescopeType,
                                double telescopePositionX,

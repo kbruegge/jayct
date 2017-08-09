@@ -18,13 +18,28 @@ public class CameraGeometry {
 
     double pixelRotation;
 
+    /**
+     * The type of the pixel in this camera.
+     */
     PixelType pixelType;
 
+
+    /**
+     * Array of id for the cameras pixel
+     */
     public int[] pixelIds;
 
+    /**
+     * Surface area of each of the cameras pixels (the entrance window of the lightcone)
+     */
     double[] pixelArea;
 
+    /**
+     * The rotation of the camera in its frame.
+     */
     double cameraRotation;
+
+
 
     public int[][] neighbours;
 
