@@ -1,3 +1,5 @@
+package reconstruction;
+
 import com.google.common.collect.Lists;
 import hexmap.TelescopeArray;
 import hexmap.TelescopeDefinition;
@@ -8,6 +10,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularMatrixException;
+import reconstruction.containers.Moments;
+import reconstruction.containers.ReconstrucedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +31,6 @@ import static java.lang.Math.*;
  * Created by Kai on 20.02.17.
  */
 public class DirectionReconstruction {
-
-
-    public  static final class ReconstrucedEvent{
-
-        public final Vector3D direction;
-        public final Vector2D impactPosition;
-
-        private ReconstrucedEvent(double[] direction, double[] corePosition){
-
-            this.direction = new Vector3D(direction);
-            this.impactPosition = new Vector2D(corePosition);
-        }
-    }
 
 
     private static final TelescopeArray MAPPING = TelescopeArray.cta();
@@ -112,7 +103,11 @@ public class DirectionReconstruction {
 
 
 
-    public static ReconstrucedEvent fromMoments(List<Moments> parameters, double altitude, double azimuth) {
+    public static ReconstrucedEvent fromMoments(Iterable<Moments> momentses, double altitude, double azimuth) {
+
+        ArrayList<Moments> parameters = Lists.newArrayList(momentses);
+
+        long eventID = parameters.get(0).eventId;
 
         List<Plane> planes = parameters.stream()
                 .map(p -> new Plane(azimuth, altitude, p))
@@ -121,7 +116,7 @@ public class DirectionReconstruction {
         double[] direction = estimateDirection(planes);
 
         double[] corePosition = estimateCorePosition(planes);
-        return new ReconstrucedEvent(direction, corePosition);
+        return new ReconstrucedEvent(eventID, direction, corePosition);
     }
 
     /**
@@ -217,7 +212,6 @@ public class DirectionReconstruction {
      * The plane is aligned with the reconstructed angle of the shower in the camera.
      * One plane for each camera partaking in an event is created. Using these planes both impact position
      * and direction can be reconstructed.
-     *
      */
     private static class Plane {
         //the telescope id this reconstructed plane belongs to

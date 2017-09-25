@@ -7,10 +7,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,14 +26,21 @@ import java.util.zip.GZIPInputStream;
  * Uses GSON to map the events stored in JSON format Maps Java classes.
  * Created by mackaiver on 09/08/17.
  */
-public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageReader.Event> {
+public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageReader.Event>, Serializable {
 
+    private static Path inputPath;
     private Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     private JsonReader reader;
 
     @Override
     public Iterator<Event> iterator() {
-        return this;
+        try {
+            reader.close();
+            return ImageReader.fromPath(inputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -124,7 +129,8 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
      * @throws IOException in case the file cannot be accessed/read
      */
     public static ImageReader fromPath(Path path) throws IOException {
-        return new ImageReader(Files.newInputStream(path));
+        inputPath = path;
+        return new ImageReader(Files.newInputStream(inputPath));
     }
 
 
@@ -135,7 +141,8 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
      * @throws IOException in case the file cannot be accessed/read
      */
     public static ImageReader fromPathString(String path) throws IOException {
-        return new ImageReader(Files.newInputStream(Paths.get(path)));
+        inputPath = Paths.get(path);
+        return new ImageReader(Files.newInputStream(inputPath));
     }
 
     /**
@@ -145,6 +152,11 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
      * @throws IOException in case the url cannot be accessed/read
      */
     public static ImageReader fromURL(URL url) throws IOException {
+        try {
+            inputPath = Paths.get(url.toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         return new ImageReader(url.openStream());
     }
 
@@ -168,10 +180,10 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
         }
 
         InputStreamReader streamReader = new InputStreamReader(inputStream, "UTF-8");
-
         reader = new JsonReader(streamReader);
         reader.beginArray();
     }
+
 
     @Override
     public Event next() {

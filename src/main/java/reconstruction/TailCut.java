@@ -1,4 +1,7 @@
+package reconstruction;
+
 import io.ImageReader;
+import reconstruction.containers.ShowerImage;
 
 import java.util.List;
 import java.util.stream.Collector;
