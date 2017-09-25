@@ -12,7 +12,7 @@ import java.util.HashSet;
  *
  * Created by kaibrugge on 13.02.17.
  */
-public class Shower implements Serializable {
+public class ShowerImage implements Serializable {
 
     private static final TelescopeArray mapping = TelescopeArray.cta();
 
@@ -26,7 +26,7 @@ public class Shower implements Serializable {
      * @param cameraId the id of the camera which recorded the image.
      * @param eventId the unique event id this shower belongs to.
      */
-    public Shower(int cameraId, long eventId) {
+    public ShowerImage(int cameraId, long eventId) {
         this.cameraId = cameraId;
         this.eventId = eventId;
     }

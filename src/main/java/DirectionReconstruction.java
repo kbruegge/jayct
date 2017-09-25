@@ -1,4 +1,3 @@
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import hexmap.TelescopeArray;
 import hexmap.TelescopeDefinition;
@@ -9,8 +8,6 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularMatrixException;
-
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +26,24 @@ import static java.lang.Math.*;
  *
  * Created by Kai on 20.02.17.
  */
-public class Stereo{
+public class DirectionReconstruction {
+
+
+    public  static final class ReconstrucedEvent{
+
+        public final Vector3D direction;
+        public final Vector2D impactPosition;
+
+        private ReconstrucedEvent(double[] direction, double[] corePosition){
+
+            this.direction = new Vector3D(direction);
+            this.impactPosition = new Vector2D(corePosition);
+        }
+    }
+
 
     private static final TelescopeArray MAPPING = TelescopeArray.cta();
+
 
     /**
      * Convert in-camera coordinates to direction vectors in 3D-space.
@@ -44,7 +56,7 @@ public class Stereo{
      * @param cameraRotation rotation of the camera within the telescope housing in radians
      * @return a direction vector, (x,y,z), corresponding to the direction of the given point in the camera
      */
-    private static double[] cameraCoordinateToDirectionVector
+    private static Vector3D cameraCoordinateToDirectionVector
     (
             double x,
             double y,
@@ -61,82 +73,46 @@ public class Stereo{
         double rho = sqrt(pow(x, 2) + pow(y, 2));
         double beta = rho / focalLength;
 
-        double[] telescopeDirection = cartesianFromPolar(phi, theta);
+        Vector3D telescopeDirection = cartesianFromPolar(1, phi, theta);
+        Vector3D newAxis = cartesianFromPolar(1, phi, theta + beta);
 
-        double[] p = cartesianFromPolar(phi, theta + beta);
+        Rotation rotation = new Rotation(newAxis, alpha - cameraRotation, RotationConvention.FRAME_TRANSFORM);
 
-        return rotateAroundAxis(p, telescopeDirection, alpha - cameraRotation);
+
+        return rotation.applyTo(telescopeDirection);
 
     }
 
     /**
-     * A helper function which rotates a vector around a given axis.
-     * @param vector the vector to rotate
-     * @param axis the (fixed) axis around which to rotate
-     * @param angleInRadians the angle by which to rotate
-     * @return an array [x,y,z] encoding the rotated vector.
-     */
-    private static double[] rotateAroundAxis(double[] vector, double[] axis, double angleInRadians){
-        Vector3D v = new Vector3D(vector);
-        Vector3D ax = new Vector3D(axis);
-
-        Rotation rotation = new Rotation(ax, angleInRadians, RotationConvention.FRAME_TRANSFORM);
-        Vector3D rotatedVector = rotation.applyTo(v);
-        return rotatedVector.toArray();
-    }
-
-    /**
-     * Go from spherical coordinates to cartesian coordinates. Useful for
-     * creating a direction vector from the pointing of the telescope.
+     * Go from spherical coordinates to cartesian coordinates.
      * This assumes the typical 'mathematical conventions', or ISO, for naming these angles.
      * (radius r, inclination θ, azimuth φ)
      *
      * The conversion works like this:
      *
-     *    [ sin(theta)*cos(phi),
-     *      sin(theta)*sin(phi),
-     *      cos(theta)         ]
+     *    [ r * sin(theta)*cos(phi),
+     *      r * sin(theta)*sin(phi),
+     *      cos(theta/r)         ]
+     *
+     *
+     * Apache Commons Math also provides a SphericalCoordinates object. It uses a different convention however
+     * (phi and theta are switched).
      *
      *
      * @param phi pointing phi angle of a telescope
      * @param theta pointing theta angle of a telescope
      * @return a direction vector of length 1
      */
-    private static double[] cartesianFromPolar(double phi, double theta){
-        double x = sin(theta) * cos(phi);
-        double y = sin(theta) * sin(phi);
-        double z = cos(theta);
-        return new double[] {x, y, z};
-    }
-
-    final double[] estimatedDirection;
-    final double[] estimatedImpactPosition;
-
-    private Stereo(double[] estimatedDirection,
-                  double[] estimatedImpactPosition) {
-
-        this.estimatedDirection = estimatedDirection;
-        this.estimatedImpactPosition = estimatedImpactPosition;
-    }
-
-    public double  getDirectionX(){
-        return estimatedDirection[0];
-    }
-    public double  getDirectionY(){
-        return estimatedDirection[1];
-    }
-    public double  getDirectionZ(){
-        return estimatedDirection[2];
+    private static Vector3D cartesianFromPolar(double radius, double phi, double theta){
+        double x = radius * sin(theta) * cos(phi);
+        double y = radius * sin(theta) * sin(phi);
+        double z = cos(theta/radius);
+        return new Vector3D(x, y, z);
     }
 
 
 
-    public static Stereo fromMoments(List<Moments> parameters, double altitude, double azimuth) {
-
-        //get pointing information from data stream. while these variables have different names
-        // I hope.
-//        double phi = (double) data.get("mc:az");
-//        double theta = (double) data.get("mc:alt");
+    public static ReconstrucedEvent fromMoments(List<Moments> parameters, double altitude, double azimuth) {
 
         List<Plane> planes = parameters.stream()
                 .map(p -> new Plane(azimuth, altitude, p))
@@ -145,8 +121,7 @@ public class Stereo{
         double[] direction = estimateDirection(planes);
 
         double[] corePosition = estimateCorePosition(planes);
-
-        return new Stereo(direction, corePosition);
+        return new ReconstrucedEvent(direction, corePosition);
     }
 
     /**
@@ -218,8 +193,8 @@ public class Stereo{
 
                     Vector3D product = Vector3D.crossProduct(new Vector3D(v1), new Vector3D(v2));
 
-                    //dont know what happens now. here is the docstring from the python
-                    //TODO: Find out what exactly this calculation does. and why it can have two solutions
+                    //Here is the original docstring from the python implementation:
+                    //
                     // # two great circles cross each other twice (one would be
                     // # the origin, the other one the direction of the gamma) it
                     // # doesn't matter which we pick but it should at least be
@@ -250,8 +225,8 @@ public class Stereo{
         //the weight given to the plane
         final double weight;
         //two vectors describing the plane
-        final double[] planeVector1;
-        final double[] planeVector2;
+        final Vector3D planeVector1;
+        final Vector3D planeVector2;
 
         //the normalvector of that plane
         final double[] normalVector;
@@ -268,16 +243,14 @@ public class Stereo{
             double pX = p.meanX + p.length * cos(p.delta);
             double pY = p.meanY + p.length * sin(p.delta);
 
-            double[] pDirection = cameraCoordinateToDirectionVector(pX, pY, phi, theta, tel.opticalFocalLength, 0);
-            double[] cogDirection = cameraCoordinateToDirectionVector(p.meanX, p.meanY, phi, theta, tel.opticalFocalLength, 0);
-
             this.weight = p.size * (p.length / p.width);
-            this.planeVector1 = cogDirection;
-            this.planeVector2 = pDirection;
+
+            this.planeVector1 = cameraCoordinateToDirectionVector(p.meanX, p.meanY, phi, theta, tel.opticalFocalLength, 0);
+            this.planeVector2 = cameraCoordinateToDirectionVector(pX, pY, phi, theta, tel.opticalFocalLength, 0);
 
             // c  = (v1 X v2) X v1
-            Vector3D crossProduct = Vector3D.crossProduct(Vector3D.crossProduct(new Vector3D(planeVector1), new Vector3D(planeVector2)), new Vector3D(planeVector1));
-            Vector3D norm = Vector3D.crossProduct(new Vector3D(planeVector1), crossProduct);
+            Vector3D crossProduct = Vector3D.crossProduct(Vector3D.crossProduct(planeVector1, planeVector2), planeVector1);
+            Vector3D norm = Vector3D.crossProduct(planeVector1, crossProduct);
 
             if (Double.isNaN(weight)){
                 this.normalVector = new double[]{Double.NaN,Double.NaN,Double.NaN};
@@ -297,21 +270,31 @@ public class Stereo{
             return new Vector3D(normalVector);
         }
 
+
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()){
-                return false;
-            }
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
             Plane plane = (Plane) o;
-            return telescopeId == plane.telescopeId;
+
+            if (telescopeId != plane.telescopeId) return false;
+            if (Double.compare(plane.weight, weight) != 0) return false;
+            if (!planeVector1.equals(plane.planeVector1)) return false;
+            return planeVector2.equals(plane.planeVector2);
+
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(telescopeId);
+            int result;
+            long temp;
+            result = telescopeId;
+            temp = Double.doubleToLongBits(weight);
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
+            result = 31 * result + planeVector1.hashCode();
+            result = 31 * result + planeVector2.hashCode();
+            return result;
         }
     }
 }

@@ -1,12 +1,17 @@
+import com.google.common.base.Stopwatch;
 import io.ImageReader;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -15,18 +20,53 @@ import static org.junit.Assert.assertTrue;
  */
 public class AnalysisTest {
 
+    static Logger log = LoggerFactory.getLogger(AnalysisTest.class);
+
 
     @Test
     public void testStereoParameters() throws IOException {
         URL url = ImageReader.class.getResource("/images.json.gz");
+
         ImageReader events = ImageReader.fromURL(url);
-        ImageReader.Event e = events.next();
 
-        List<Shower> showers = TailCut.collectShowersFromEvent(e);
-        List<Moments> moments = showers.stream().map(Moments::fromShower).collect(Collectors.toList());
+        for (ImageReader.Event event : events) {
+            List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
+            List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
 
-        Stereo stereo = Stereo.fromMoments(moments, 0, 1);
-        assertTrue(stereo.getDirectionZ() > 0);
+            DirectionReconstruction.ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+
+            if (reconstrucedEvent.direction.isNaN()){
+                continue;
+            }
+
+            assertTrue(reconstrucedEvent.direction.getZ() > 0);
+        }
+
+    }
+
+    @Test
+    public void testInfiniteStream() throws IOException {
+        URL url = ImageReader.class.getResource("/images.json.gz");
+        Random random = new Random();
+        ImageReader events = ImageReader.fromURL(url);
+
+        long N = 20000;
+
+        List<ImageReader.Event> eventList = events.stream().collect(toList());
+
+        eventList = random.ints(0, eventList.size()).limit(N).mapToObj(eventList::get).collect(toList());
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
+        for (ImageReader.Event event : eventList) {
+            List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
+            List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
+
+            DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+        }
+
+        Duration duration = stopwatch.elapsed();
+        log.info("Reconstruced {} event in {} seconds. Thats {} events per second", N, duration.getSeconds(), N/duration.getSeconds());
     }
 
     @Test
@@ -34,9 +74,11 @@ public class AnalysisTest {
         URL url = ImageReader.class.getResource("/images.json.gz");
         ImageReader events = ImageReader.fromURL(url);
 
+
+
         List<Moments> moments = events.stream()
-                .flatMap(TailCut::selectShowersInEvent)
-                .map(Moments::fromShower)
+                .flatMap(TailCut::streamShowerImages)
+                .map(HillasParametrization::fromShowerImage)
                 .filter(m -> m.size > 0.0)
                 .collect(Collectors.toList());
 
@@ -46,26 +88,24 @@ public class AnalysisTest {
             assertTrue(m.length > m.width);
         });
 
-        events.stream()
-                .flatMap(TailCut::selectShowersInEvent)
-                .map(Moments::fromShower)
-                .filter(m -> m.size > 0)
-                .collect(Collectors.groupingBy(m -> m.eventId));
     }
 
-    @Test
-    public void testStereoStream() throws IOException {
-        URL url = ImageReader.class.getResource("/images.json.gz");
-        ImageReader events = ImageReader.fromURL(url);
+//    @Test
+//    public void testStereoStream() throws IOException {
+//        URL url = ImageReader.class.getResource("/images.json.gz");
+//        ImageReader events = ImageReader.fromURL(url);
+//
+//        List<DirectionReconstruction.ReconstrucedEvent> reconstrucedEvents = events.stream()
+//                .flatMap(TailCut::streamShowerImages)
+//                .map(HillasParametrization::fromShowerImage)
+//                .filter(m -> m.size > 0.0)
+//                .collect(groupingBy(m -> m.eventId))
+//                .entrySet().stream()
+//                .map(e -> DirectionReconstruction.fromMoments(e.getValue(), 0, 0))
+//                .filter(e -> !e.direction.isNaN())
+//                .collect(Collectors.toList());
+//
+//        reconstrucedEvents.forEach(e -> assertFalse(e.direction.isInfinite()));
+//    }
 
-        //TODO: propagate pointing and MC information?
-        List<Stereo> stereos = events.stream()
-                .flatMap(TailCut::selectShowersInEvent)
-                .map(Moments::fromShower)
-                .filter(m -> m.size > 0)
-                .collect(Collectors.groupingBy(m -> m.eventId))
-                .entrySet().stream()
-                .map(e -> Stereo.fromMoments(e.getValue(), 0, 0))
-                .collect(Collectors.toList());
-    }
 }

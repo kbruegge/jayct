@@ -20,6 +20,12 @@ public class ImageReaderTest {
         for (ImageReader.Event e : events){
             int n = e.array.numTriggeredTelescopes;
             assertTrue("At least 2 telescopes have to trigger in the data", n >= 2);
+
+            assertTrue(
+                    "Number of images in the data has to be euqal to the number of triggered telescopes",
+                    e.images.size() == n
+            );
+
         }
     }
 }

@@ -83,6 +83,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
                     .add("ID", eventId)
                     .add("Num Triggered Tels", images.size())
                     .add("MC", mc)
+                    .add("timestamp", timestamp)
                     .toString();
         }
     }
@@ -101,6 +102,8 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
                     .add("energy", energy)
                     .add("alt", alt)
                     .add("az", az)
+                    .add("impact x", coreX)
+                    .add("impact y", coreY)
                     .toString();
         }
     }
@@ -126,7 +129,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
 
 
     /**
-     * Creates an ImageReader from a string encoding a path somewehre on the filesystem
+     * Creates an ImageReader from a string encoding a path somewhere on the filesystem
      * @param path the path to open
      * @return the imagereader
      * @throws IOException in case the file cannot be accessed/read
@@ -150,7 +153,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
     }
 
 
-    private ImageReader(InputStream inputStream) throws IOException {
+    ImageReader(InputStream inputStream) throws IOException {
         //see https://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped
         PushbackInputStream pb = new PushbackInputStream(inputStream, 2 ); //we need a pushbackstream to look ahead
 
@@ -174,6 +177,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
     public Event next() {
         return gson.fromJson(reader, Event.class);
     }
+
 
 
 }

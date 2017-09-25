@@ -3,7 +3,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -19,12 +18,12 @@ public class CleaningTest {
         ImageReader events = ImageReader.fromURL(url);
         ImageReader.Event e = events.next();
 
-        List<Shower> showers = TailCut.collectShowersFromEvent(e);
+        List<ShowerImage> showerImages = TailCut.onImagesInEvent(e);
 
-        assertTrue(showers.size() >= 2);
+        assertTrue(showerImages.size() >= 2);
 
         //each shower should have at least two signal pixels
-        for( Shower s : showers){
+        for( ShowerImage s : showerImages){
             assertTrue(s.signalPixels.size() >= 2);
         }
     }
