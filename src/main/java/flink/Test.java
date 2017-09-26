@@ -10,7 +10,7 @@ import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
-import org.apache.flink.streaming.api.functions.source.SourceFunction;
+import org.apache.flink.streaming.api.functions.source.ParallelSourceFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 import reconstruction.DirectionReconstruction;
@@ -38,10 +38,11 @@ public class Test {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        DataStreamSource<ImageReader.Event> source = env.addSource(new SourceFunction<ImageReader.Event>() {
+        DataStreamSource<ImageReader.Event> source = env.addSource(new ParallelSourceFunction<ImageReader.Event>() {
 
             ImageReader reader = null;
             Iterator<ImageReader.Event> cycle = null;
+            volatile boolean isRunning = true;
 
             @Override
             public void run(SourceContext<ImageReader.Event> ctx) throws Exception {
@@ -49,19 +50,20 @@ public class Test {
                     reader = ImageReader.fromPathString("./src/main/resources/images.json.gz");
                     cycle = Iterables.cycle(reader).iterator();
                 }
-                while(cycle.hasNext()) {
+                while(cycle.hasNext() && isRunning) {
                     ctx.collect(cycle.next());
                 }
             }
 
             @Override
             public void cancel() {
-
+                isRunning = false;
             }
         });
 
 
         source
+            .setParallelism(2)
             .flatMap(new FlatMapFunction<ImageReader.Event, ShowerImage>() {
 
                     @Override
