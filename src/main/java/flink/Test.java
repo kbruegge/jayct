@@ -21,7 +21,6 @@ import reconstruction.containers.ReconstrucedEvent;
 import reconstruction.containers.ShowerImage;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +31,6 @@ import java.util.List;
  */
 public class Test {
 
-    private static URL url = ImageReader.class.getResource("/images.json.gz");
 
     public static void main (String[] args) throws Exception {
 
@@ -40,15 +38,16 @@ public class Test {
 
         DataStreamSource<ImageReader.Event> source = env.addSource(new ParallelSourceFunction<ImageReader.Event>() {
 
-            ImageReader reader = null;
+            List<ImageReader.Event> events = null;
             Iterator<ImageReader.Event> cycle = null;
+
             volatile boolean isRunning = true;
 
             @Override
             public void run(SourceContext<ImageReader.Event> ctx) throws Exception {
-                if (reader == null){
-                    reader = ImageReader.fromPathString("./src/main/resources/images.json.gz");
-                    cycle = Iterables.cycle(reader).iterator();
+                if (events == null){
+                    events = ImageReader.fromPathString("./src/main/resources/images.json.gz").getListOfRandomEvents(100);
+                    cycle = Iterables.cycle(events).iterator();
                 }
                 while(cycle.hasNext() && isRunning) {
                     ctx.collect(cycle.next());
@@ -122,35 +121,10 @@ public class Test {
             })
             .setParallelism(1);
 
-//            .writeUsingOutputFormat(new FileOutputFormat<ReconstrucedEvent>() {
-//
-//                CSVWriter w = null;
-//
-//                @Override
-//                public void writeRecord(ReconstrucedEvent record) throws IOException {
-//                    if (w == null){
-//                        w = new CSVWriter(new File("/Users/mackaiver/test_bla.csv"));
-//                    }
-//                    w.appendReconstructedEvent(record);
-//                }
-//            });
-
-
-
-//        .groupBy(new KeySelector<Moments, Long>() {
-//            @Override
-//            public Long getKey(Moments value) throws Exception {
-//                return value.eventId;
-//            }
-//        }).combineGroup(new GroupCombineFunction<Moments, ReconstrucedEvent>() {
-//            @Override
-//            public void combine(Iterable<Moments> values, Collector<ReconstrucedEvent> out) throws Exception {
-//                DirectionReconstruction.fromMoments(values, 0, 1);
-//            }
-//        })
-
+        System.out.println(env.getExecutionPlan());
 
         env.execute("Lecker CTA auf Flink");
+
 
     }
 }

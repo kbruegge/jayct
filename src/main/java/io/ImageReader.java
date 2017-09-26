@@ -1,6 +1,7 @@
 package io;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Lists;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,13 +14,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Opens cta events stored in JSON files (or json.gz)
@@ -191,5 +192,16 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
     }
 
 
+    /**
+     * Generates a list of N events sampled with replacement from the underlying file.
+     *
+     * @param N Number of randomly sampled events to produce
+     * @return a list of events
+     */
+    public List<Event> getListOfRandomEvents(int N){
+        ArrayList<Event> events = Lists.newArrayList(iterator());
+
+        return new Random().ints(0, events.size()).limit(N).mapToObj(events::get).collect(toList());
+    }
 
 }
