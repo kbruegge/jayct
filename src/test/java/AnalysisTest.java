@@ -1,17 +1,24 @@
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Iterables;
 import io.ImageReader;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reconstruction.DirectionReconstruction;
+import reconstruction.HillasParametrization;
+import reconstruction.TailCut;
+import reconstruction.containers.Moments;
+import reconstruction.containers.ReconstrucedEvent;
+import reconstruction.containers.ShowerImage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -33,7 +40,7 @@ public class AnalysisTest {
             List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
             List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
 
-            DirectionReconstruction.ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+            ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
 
             if (reconstrucedEvent.direction.isNaN()){
                 continue;
@@ -45,25 +52,23 @@ public class AnalysisTest {
     }
 
     @Test
-    public void testInfiniteStream() throws IOException {
+    public void testCycle() throws IOException {
         URL url = ImageReader.class.getResource("/images.json.gz");
-        Random random = new Random();
         ImageReader events = ImageReader.fromURL(url);
 
-        long N = 20000;
+        Iterator<ImageReader.Event> cycle = Iterables.cycle(events).iterator();
 
-        List<ImageReader.Event> eventList = events.stream().collect(toList());
-
-        eventList = random.ints(0, eventList.size()).limit(N).mapToObj(eventList::get).collect(toList());
+        int N = 300;
 
         Stopwatch stopwatch = Stopwatch.createStarted();
-
-        for (ImageReader.Event event : eventList) {
+        IntStream.range(0, N).forEach(i -> {
+            ImageReader.Event event = cycle.next();
             List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
             List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
 
             DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
-        }
+        });
+
 
         Duration duration = stopwatch.elapsed();
         log.info("Reconstruced {} event in {} seconds. Thats {} events per second", N, duration.getSeconds(), N/duration.getSeconds());

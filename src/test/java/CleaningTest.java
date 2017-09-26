@@ -1,5 +1,7 @@
 import io.ImageReader;
 import org.junit.Test;
+import reconstruction.containers.ShowerImage;
+import reconstruction.TailCut;
 
 import java.io.IOException;
 import java.net.URL;
