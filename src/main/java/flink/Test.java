@@ -34,6 +34,13 @@ public class Test {
 
     public static void main (String[] args) throws Exception {
 
+        if (args.length != 1){
+            System.out.println("You must specify a path to an input file");
+            return;
+        }
+
+        System.out.println("Reading data from file: " + args[0] );
+
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         DataStreamSource<ImageReader.Event> source = env.addSource(new ParallelSourceFunction<ImageReader.Event>() {
@@ -46,7 +53,7 @@ public class Test {
             @Override
             public void run(SourceContext<ImageReader.Event> ctx) throws Exception {
                 if (events == null){
-                    events = ImageReader.fromPathString("./src/main/resources/images.json.gz").getListOfRandomEvents(100);
+                    events = ImageReader.fromPathString(args[0]).getListOfRandomEvents(100);
                     cycle = Iterables.cycle(events).iterator();
                 }
                 while(cycle.hasNext() && isRunning) {
@@ -62,7 +69,7 @@ public class Test {
 
 
         source
-            .setParallelism(2)
+            .setParallelism(8)
             .flatMap(new FlatMapFunction<ImageReader.Event, ShowerImage>() {
 
                     @Override
