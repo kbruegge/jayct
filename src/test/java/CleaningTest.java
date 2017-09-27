@@ -18,7 +18,7 @@ public class CleaningTest {
     public void testTailCut() throws IOException {
         URL url = ImageReader.class.getResource("/images.json.gz");
         ImageReader events = ImageReader.fromURL(url);
-        ImageReader.Event e = events.next();
+        ImageReader.Event e = events.iterator().next();
 
         List<ShowerImage> showerImages = TailCut.onImagesInEvent(e);
 

@@ -9,13 +9,11 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
@@ -27,46 +25,59 @@ import static java.util.stream.Collectors.toList;
  * Uses GSON to map the events stored in JSON format Maps Java classes.
  * Created by mackaiver on 09/08/17.
  */
-public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageReader.Event>, Serializable {
+public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Serializable {
 
-    private static Path inputPath;
+    private InputStream inputStream;
     private Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     private JsonReader reader;
 
     @Override
     public Iterator<Event> iterator() {
-        try {
-            reader.close();
-            return ImageReader.fromPath(inputPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return new ImageIterator();
     }
 
-    @Override
-    public void forEach(Consumer<? super Event> action) {
-        Iterable.super.forEach(action);
-    }
+    public class ImageIterator implements Iterator<Event> {
 
-    @Override
-    public Spliterator<Event> spliterator() {
-        return Iterable.super.spliterator();
-    }
-
-    @Override
-    public boolean hasNext() {
-        //check whether the end of the file has been reached
-        if (reader != null) {
-            JsonToken token;
-            try {
-                token = reader.peek();
-                return token != JsonToken.END_ARRAY;
-            } catch (IOException e) {
-                return false;
+        @Override
+        public boolean hasNext() {
+            //check whether the end of the file has been reached
+            if (reader != null) {
+                JsonToken token;
+                try {
+                    token = reader.peek();
+                    return token != JsonToken.END_ARRAY;
+                } catch (IOException e) {
+                    return false;
+                }
             }
+            return false;
         }
-        return false;
+
+        @Override
+        public Event next() {
+            if (!hasNext()){
+                throw new NoSuchElementException();
+            }
+
+            return gson.fromJson(reader, Event.class);
+        }
+    }
+
+
+
+    @Override
+    public void close() throws IOException {
+        inputStream.close();
+    }
+
+    /**
+     * Makes sure the underlying stream is closed.
+     */
+    @Override
+    protected void finalize() throws Throwable
+    {
+        close();
+        super.finalize();
     }
 
     /**
@@ -124,14 +135,23 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
     }
 
     /**
+     * Creates an ImageReader from a java InputStream object.
+     * @param in Inputstream object to read from
+     * @return the imagereader
+     * @throws IOException in case the file cannot be accessed/read
+     */
+    public static ImageReader fromInputStream(InputStream in) throws IOException {
+        return new ImageReader(in);
+    }
+
+    /**
      * Creates an ImageReader from a {@link Path} object pointing to a file somewhere in the filesystem
      * @param path the path to open
      * @return the imagereader
      * @throws IOException in case the file cannot be accessed/read
      */
     public static ImageReader fromPath(Path path) throws IOException {
-        inputPath = path;
-        return new ImageReader(Files.newInputStream(inputPath));
+        return new ImageReader(Files.newInputStream(path));
     }
 
 
@@ -142,8 +162,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
      * @throws IOException in case the file cannot be accessed/read
      */
     public static ImageReader fromPathString(String path) throws IOException {
-        inputPath = Paths.get(path);
-        return new ImageReader(Files.newInputStream(inputPath));
+        return new ImageReader(Files.newInputStream(Paths.get(path)));
     }
 
     /**
@@ -153,11 +172,6 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
      * @throws IOException in case the url cannot be accessed/read
      */
     public static ImageReader fromURL(URL url) throws IOException {
-        try {
-            inputPath = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
         return new ImageReader(url.openStream());
     }
 
@@ -166,7 +180,10 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
     }
 
 
-    ImageReader(InputStream inputStream) throws IOException {
+    private ImageReader(InputStream inputStream) throws IOException {
+
+        this.inputStream = inputStream;
+
         //see https://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped
         PushbackInputStream pb = new PushbackInputStream(inputStream, 2 ); //we need a pushbackstream to look ahead
 
@@ -186,10 +203,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Iterator<ImageR
     }
 
 
-    @Override
-    public Event next() {
-        return gson.fromJson(reader, Event.class);
-    }
+
 
 
     /**

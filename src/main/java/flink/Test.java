@@ -88,7 +88,7 @@ public class Test {
             .keyBy(new KeySelector<Moments, Long>() {
                     @Override
                     public Long getKey(Moments value) throws Exception {
-                        return value.eventId;
+                        return value.eventID;
                     }
                 })
             .timeWindow(Time.seconds(10))

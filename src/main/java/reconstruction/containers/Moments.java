@@ -10,9 +10,11 @@ import com.google.common.base.MoreObjects;
  */
 public class Moments {
 
-    public Moments(long eventId, int telescopeID, double width, double length, double delta, double skewness, double kurtosis, double phi, double miss, double r, double meanX, double meanY, double size) {
-        this.eventId = eventId;
+    public Moments(long eventID, int telescopeID, int cameraID, int numberOfPixel, double width, double length, double delta, double skewness, double kurtosis, double phi, double miss, double r, double meanX, double meanY, double size) {
+        this.eventID = eventID;
         this.telescopeID = telescopeID;
+        this.cameraID = cameraID;
+        this.numberOfPixel = numberOfPixel;
         this.width = width;
         this.length = length;
         this.delta = delta;
@@ -27,8 +29,10 @@ public class Moments {
     }
 
 
-    public final long eventId;
+    public final long eventID;
     public final int telescopeID;
+    public final int cameraID;
+    public final int numberOfPixel;
 
     public final double width;
     public final double length;
@@ -45,7 +49,7 @@ public class Moments {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("eventID", eventId)
+                .add("eventID", eventID)
                 .add("telescopeID", telescopeID)
                 .add("width", width)
                 .add("length", length)

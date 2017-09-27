@@ -91,6 +91,21 @@ public class HillasParametrization {
         double kurtosis = (kurtosis_a / size) / pow(kurtosis_b / size, 2);
 
 
-        return new Moments(showerImage.eventId, showerImage.cameraId, width, length, delta, skewness, kurtosis, phi, miss, r, meanX, meanY, size);
+        return new Moments(
+                showerImage.eventId,
+                showerImage.cameraId,
+                showerImage.cameraId,
+                showerImage.signalPixels.size(),
+                width,
+                length,
+                delta,
+                skewness,
+                kurtosis,
+                phi,
+                miss,
+                r,
+                meanX,
+                meanY,
+                size);
     }
 }

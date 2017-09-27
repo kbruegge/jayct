@@ -107,7 +107,7 @@ public class DirectionReconstruction {
 
         ArrayList<Moments> parameters = Lists.newArrayList(momentses);
 
-        long eventID = parameters.get(0).eventId;
+        long eventID = parameters.get(0).eventID;
 
         List<Plane> planes = parameters.stream()
                 .map(p -> new Plane(azimuth, altitude, p))
