@@ -1,3 +1,5 @@
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Iterables;
 import hexmap.TelescopeArray;
 import io.ImageReader;
 import ml.TreeEnsemblePredictor;
@@ -16,9 +18,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -87,7 +91,7 @@ public class AnalysisTest {
                 .flatMap(TailCut::streamShowerImages)
                 .map(HillasParametrization::fromShowerImage)
                 .filter(m -> m.size > 0.0)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         assertTrue(moments.size() >= 2);
 
@@ -135,22 +139,56 @@ public class AnalysisTest {
 
     }
 
-//    @Test
-//    public void testStereoStream() throws IOException {
-//        URL url = ImageReader.class.getResource("/images.json.gz");
-//        ImageReader events = ImageReader.fromURL(url);
-//
-//        List<DirectionReconstruction.ReconstrucedEvent> reconstrucedEvents = events.stream()
-//                .flatMap(TailCut::streamShowerImages)
-//                .map(HillasParametrization::fromShowerImage)
-//                .filter(m -> m.size > 0.0)
-//                .collect(groupingBy(m -> m.eventId))
-//                .entrySet().stream()
-//                .map(e -> DirectionReconstruction.fromMoments(e.getValue(), 0, 0))
-//                .filter(e -> !e.direction.isNaN())
-//                .collect(Collectors.toList());
-//
-//        reconstrucedEvents.forEach(e -> assertFalse(e.direction.isInfinite()));
-//    }
+    @Test
+    public void testParallelStream() throws IOException, URISyntaxException {
+        ImageReader events = ImageReader.fromURL(ImageReader.class.getResource("/images.json.gz"));
+        List<ImageReader.Event> eventList = events.stream().collect(toList());
+
+        URL predictorURL = ImageReader.class.getResource("/classifier.json");
+        TreeEnsemblePredictor predictor = new TreeEnsemblePredictor(Paths.get(predictorURL.toURI()));
+
+        Iterable<ImageReader.Event> cycle = Iterables.cycle(eventList);
+
+
+        long N = 50000;
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
+        List<Double> predictions = StreamSupport.stream(cycle.spliterator(), true)
+                .limit(N)
+                .map(event -> {
+                    List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
+                    List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
+
+                    int numberOfTelescopes = moments.size();
+
+                    return moments.stream()
+                            .map(m ->
+                                    new Vectorizer().of(
+                                            numberOfTelescopes,
+                                            m.numberOfPixel,
+                                            m.width,
+                                            m.length,
+                                            m.skewness,
+                                            m.kurtosis,
+                                            m.phi,
+                                            m.miss,
+                                            m.size,
+                                            TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
+                                    ).createFloatVector()
+                            )
+                            .mapToDouble(f ->
+                                    (double) predictor.predictProba(f)[0]
+                            )
+                            .average()
+                            .orElse(0);
+
+
+                })
+                .collect(toList());
+
+
+        Duration duration = stopwatch.elapsed();
+        log.info("Reconstruced {} event in {} seconds. Thats {} events per second", N, duration.getSeconds(), N/duration.getSeconds());
+    }
 
 }
