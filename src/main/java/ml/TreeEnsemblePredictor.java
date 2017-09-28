@@ -1,13 +1,9 @@
 package ml;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -15,13 +11,12 @@ import java.nio.file.Path;
  * This class can be created from a json file produced from pre-trained sklearn decision trees.
  * It can predict new samples.
  */
-public class TreeEnsemblePredictor {
-    private final Gson gson = new GsonBuilder().create();
+public class TreeEnsemblePredictor implements Serializable{
     private final DecisionTree[] trees;
 
 
 
-    private class DecisionTree {
+    private class DecisionTree implements Serializable {
         public final float[] thresholds;
         public final int[] attributes;
         public final int[] children_left;
@@ -51,7 +46,7 @@ public class TreeEnsemblePredictor {
     public TreeEnsemblePredictor(Path pathToModel) throws IOException {
         BufferedReader reader = Files.newBufferedReader(pathToModel);
         TypeToken<DecisionTree[]> t = TypeToken.of(DecisionTree[].class);
-        trees = gson.fromJson(reader, t.getType());
+        trees = new GsonBuilder().create().fromJson(reader, t.getType());
     }
 
 
@@ -65,7 +60,7 @@ public class TreeEnsemblePredictor {
     public TreeEnsemblePredictor(InputStream in) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         TypeToken<DecisionTree[]> t = TypeToken.of(DecisionTree[].class);
-        trees = gson.fromJson(reader, t.getType());
+        trees = new GsonBuilder().create().fromJson(reader, t.getType());
     }
 
     public float[] predictProba(float[] sample) {
