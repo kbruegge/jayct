@@ -150,7 +150,7 @@ public class AnalysisTest {
         Iterable<ImageReader.Event> cycle = Iterables.cycle(eventList);
 
 
-        long N = 50000;
+        long N = 10000;
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         List<Double> predictions = StreamSupport.stream(cycle.spliterator(), true)

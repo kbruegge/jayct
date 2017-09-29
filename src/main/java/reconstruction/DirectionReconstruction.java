@@ -151,7 +151,7 @@ public class DirectionReconstruction {
         try {
             return MatrixUtils.inverse(A.transpose().multiply(A)).multiply(A.transpose()).operate(d);
         } catch (SingularMatrixException e){
-            return new double[]{Double.NaN, Double.NaN, Double.NaN};
+            return new double[]{Double.NaN, Double.NaN};
         }
 
     }
@@ -201,6 +201,7 @@ public class DirectionReconstruction {
                     return product.scalarMultiply(plane1.weight * plane2.weight);
                 })
                 .reduce(Vector3D::add)
+                .filter(l -> l.getNorm() > 0)
                 .map(Vector3D::normalize);
 
         return direction.orElse(new Vector3D(0, 0, 0)).toArray();
