@@ -11,18 +11,38 @@ import java.util.List;
 
 
 /**
- * A class to write results to a jsonl file.
- * Created by mackaiver on 25/09/17.
+ * Writes results to a csv file.
  */
 public class CSVWriter implements Serializable{
     private PrintWriter writer;
     private String seperator = ",";
 
+    /**
+     * Create a new CSVWriter for the given File.
+     * @param file the file to create.
+     * @throws IOException in case the file can not be written to.
+     */
     public CSVWriter(File file) throws IOException {
         writer = new PrintWriter(file);
     }
 
-    public void appendReconstructedEvent(ReconstrucedEvent e) throws IOException {
+    /**
+     * Appends a row to the CSV file. Containing the values for
+     *
+     *    e.eventID,
+     *    e.direction.getX(),
+     *    e.direction.getY(),
+     *    e.direction.getZ(),
+     *    e.impactPosition.getX(),
+     *    e.impactPosition.getY(),
+     *    classPrediction
+     *
+     *
+     * @param e the reconstructed event object
+     * @param classPrediction the prediction (aka. gammaness)
+     * @throws IOException in case the file cannot not be written to.
+     */
+    public void append(ReconstrucedEvent e, double classPrediction) throws IOException {
 
         String s = Joiner.on(seperator).join(
                     e.eventID,
@@ -30,27 +50,17 @@ public class CSVWriter implements Serializable{
                     e.direction.getY(),
                     e.direction.getZ(),
                     e.impactPosition.getX(),
-                    e.impactPosition.getY()
+                    e.impactPosition.getY(),
+                    classPrediction
                 );
         writer.println(s);
         writer.flush();
     }
 
-    public void appendReconstructedEvents(List<ReconstrucedEvent> events) throws IOException {
-        events.forEach( e -> {
-            String s = Joiner.on(seperator).join(
-                    e.eventID,
-                    e.direction.getX(),
-                    e.direction.getY(),
-                    e.direction.getZ(),
-                    e.impactPosition.getX(),
-                    e.impactPosition.getY()
-            );
-            writer.println(s);
-        });
-        writer.flush();
-    }
-
+    /**
+     * Write the given strings as a row to the CSV file. usefull for writing the header.
+     * @param headerKeywords the strings to write into the row.
+     */
     public void writeHeader(String... headerKeywords) {
         String h = Joiner.on(seperator).join(headerKeywords);
         writer.println(h);

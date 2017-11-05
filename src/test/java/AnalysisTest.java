@@ -1,10 +1,12 @@
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterables;
 import hexmap.TelescopeArray;
+import io.CSVWriter;
 import io.ImageReader;
 import ml.TreeEnsemblePredictor;
 import ml.Vectorizer;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reconstruction.DirectionReconstruction;
@@ -14,6 +16,7 @@ import reconstruction.containers.Moments;
 import reconstruction.containers.ReconstrucedEvent;
 import reconstruction.containers.ShowerImage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -55,30 +58,56 @@ public class AnalysisTest {
 
     }
 
-//    @Test
-//    public void testCycle() throws IOException {
-//        URL url = ImageReader.class.getResource("/images.json.gz");
-//        ImageReader events = ImageReader.fromURL(url);
-//
-//        Iterable<ImageReader.Event> cycle = Iterables.cycle(events);
-//
-//        int N = 300;
-//
-//        Stopwatch stopwatch = Stopwatch.createStarted();
-//
-//        cycle.
-//        IntStream.range(0, N).forEach(i -> {
-//            ImageReader.Event event = cycle.;
-//            List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-//            List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-//
-//            DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
-//        });
-//
-//
-//        Duration duration = stopwatch.elapsed();
-//        log.info("Reconstruced {} event in {} seconds. Thats {} events per second", N, duration.getSeconds(), N/duration.getSeconds());
-//    }
+
+    @Test
+    public void testFullChain() throws IOException, URISyntaxException {
+        URL url = ImageReader.class.getResource("/images.json.gz");
+        URL predictorURL = ImageReader.class.getResource("/classifier.json");
+
+        TemporaryFolder folder = new TemporaryFolder();
+        folder.create();
+
+        CSVWriter csv = new CSVWriter(folder.newFile());
+
+        TreeEnsemblePredictor predictor = new TreeEnsemblePredictor(Paths.get(predictorURL.toURI()));
+        ImageReader events = ImageReader.fromURL(url);
+
+
+        for (ImageReader.Event event : events) {
+            List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
+            List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
+
+            double prediction = moments.stream()
+                    .map(m ->
+                            new Vectorizer().of(
+                                    event.array.numTriggeredTelescopes,
+                                    m.numberOfPixel,
+                                    m.width,
+                                    m.length,
+                                    m.skewness,
+                                    m.kurtosis,
+                                    m.phi,
+                                    m.miss,
+                                    m.size,
+                                    TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
+                            ).createFloatVector()
+                    )
+                    .mapToDouble(f ->
+                            (double) predictor.predictProba(f)[0]
+                    )
+                    .average()
+                    .orElse(0);
+
+            ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+
+            if (reconstrucedEvent.direction.isNaN()){
+                continue;
+            }
+
+            csv.append(reconstrucedEvent, prediction);
+        }
+
+    }
 
     @Test
     public void testMomentsStream() throws IOException {

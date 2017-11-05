@@ -89,7 +89,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
 
-        DataStreamSource<ImageReader.Event> source = env.addSource(new FolderEventSource(inputFile));
+        DataStreamSource<ImageReader.Event> source = env.addSource(new InfinteEventSource(inputFile));
 
 
         source

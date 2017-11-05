@@ -204,7 +204,7 @@ public class DirectionReconstruction {
                 .filter(l -> l.getNorm() > 0)
                 .map(Vector3D::normalize);
 
-        return direction.orElse(new Vector3D(0, 0, 0)).toArray();
+        return direction.orElse(new Vector3D(Double.NaN, Double.NaN, Double.NaN)).toArray();
     }
 
 
