@@ -20,8 +20,8 @@ We tried to keep it simple. Heres an example of how to reconstruct event directi
             if (reconstrucedEvent.direction.isNaN()){
                 continue;
             }
-
-            assertTrue(reconstrucedEvent.direction.getZ() > 0);
+            
+            // continue doing whatever you do
         }
 ```
 
