@@ -1,14 +1,16 @@
 package flink;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterables;
 import io.ImageReader;
 import org.apache.flink.streaming.api.functions.source.ParallelSourceFunction;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by mackaiver on 29/09/17.
+ * An event source which produces data for the specified amount fo seconds.
  */
 public class InfinteEventSource implements ParallelSourceFunction<ImageReader.Event>{
 
@@ -17,9 +19,11 @@ public class InfinteEventSource implements ParallelSourceFunction<ImageReader.Ev
     volatile boolean isRunning = true;
 
     final String inputFile;
+    private final int numberOfSecondsToStream;
 
-    public InfinteEventSource(String inputFile) {
+    public InfinteEventSource(String inputFile, int numberOfSecondsToStream) {
         this.inputFile = inputFile;
+        this.numberOfSecondsToStream = numberOfSecondsToStream;
     }
 
     @Override
@@ -28,12 +32,16 @@ public class InfinteEventSource implements ParallelSourceFunction<ImageReader.Ev
                 events = ImageReader.fromPathString(inputFile).getListOfRandomEvents(100);
                 cycle = Iterables.cycle(events).iterator();
             }
+            Stopwatch stopwatch = Stopwatch.createStarted();
             long i = 0;
             while(cycle.hasNext() && isRunning) {
                 ImageReader.Event event = cycle.next();
                 event.eventId += i;
                 ctx.collect(event);
                 i++;
+                if (stopwatch.elapsed(TimeUnit.SECONDS) > numberOfSecondsToStream){
+                    isRunning = false;
+                }
             }
         }
 
@@ -41,5 +49,4 @@ public class InfinteEventSource implements ParallelSourceFunction<ImageReader.Ev
         public void cancel() {
             isRunning = false;
         }
-
 }

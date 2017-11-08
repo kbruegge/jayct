@@ -40,6 +40,9 @@ public class DistributeEvents implements Callable<Void>, Serializable {
     @CommandLine.Option(names = {"-m", "--map-parallelism"})
     int mapParallelism = 4;
 
+    @CommandLine.Option(names = {"-l", "--length"}, description = "Number of seconds this stream generates data.")
+    int numberOfSecondsToStream= 120;
+
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Displays this help message and quits.")
     boolean helpRequested = false;
 
@@ -77,7 +80,7 @@ public class DistributeEvents implements Callable<Void>, Serializable {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        env.addSource(new InfinteEventSource(inputFile))
+        env.addSource(new InfinteEventSource(inputFile, numberOfSecondsToStream))
             .setParallelism( sourceParallelism)
             .map(new RichMapFunction<ImageReader.Event, Tuple2<ReconstrucedEvent, Double>>() {
 

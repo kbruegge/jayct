@@ -7,6 +7,7 @@ import ml.Vectorizer;
 import org.apache.flink.api.common.functions.*;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -23,6 +24,8 @@ import reconstruction.containers.ShowerImage;
 
 import java.io.Serializable;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -43,6 +46,9 @@ public class DistributeImages implements Callable<Void>, Serializable {
     @CommandLine.Option(names = {"-s", "--sink-parallelism"})
     int sinkParallelism = 4;
 
+    @CommandLine.Option(names = {"-l", "--length"}, description = "Number of seconds this stream generates data.")
+    int numberOfSecondsToStream= 120;
+
     @CommandLine.Option(names = {"-w", "--window-parallelism"})
     int windowParallelism = 4;
 
@@ -57,6 +63,9 @@ public class DistributeImages implements Callable<Void>, Serializable {
 
     @CommandLine.Parameters(index = "1", paramLabel = "Input File for the classifier model")
     String modelFile = " ";
+
+    @CommandLine.Parameters(index = "2", paramLabel = "Output File to be written.")
+    String outputFile = " ";
 
 
 
@@ -89,7 +98,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
 
-        DataStreamSource<ImageReader.Event> source = env.addSource(new InfinteEventSource(inputFile));
+        DataStreamSource<ImageReader.Event> source = env.addSource(new InfinteEventSource(inputFile, numberOfSecondsToStream));
 
 
         source
@@ -187,7 +196,17 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 })
                 .setParallelism( windowParallelism)
                 .rescale()
-                .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
+                .map(new MapFunction<Tuple2<ReconstrucedEvent, Double>, Tuple4<String, Double, Double, Double>>() {
+                    @Override
+                    public Tuple4<String, Double, Double, Double> map(Tuple2<ReconstrucedEvent, Double> value) throws Exception {
+                        String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                        double x = value.f0.direction.getX();
+                        double y = value.f0.direction.getY();
+                        double z = value.f0.direction.getZ();
+                        return Tuple4.of(timestamp, x, y, z);
+                    }
+                })
+                .writeAsCsv(outputFile, FileSystem.WriteMode.OVERWRITE)
                 .setParallelism( sinkParallelism);
 
         return env;
