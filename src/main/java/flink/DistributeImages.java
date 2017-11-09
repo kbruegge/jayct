@@ -1,5 +1,6 @@
 package flink;
 
+import com.google.common.base.Joiner;
 import hexmap.TelescopeArray;
 import io.ImageReader;
 import ml.TreeEnsemblePredictor;
@@ -90,6 +91,8 @@ public class DistributeImages implements Callable<Void>, Serializable {
         System.out.println("Reading classifier from file: " +  modelFile);
         System.out.println("Writing result to file: " +  outputFile);
 
+        System.out.println("Parallelism: " + Joiner.on(", ").join(sourceParallelism, mapParallelism, windowParallelism, sinkParallelism));
+
 
         StreamExecutionEnvironment env = flinkPlan();
         env.execute();
@@ -118,7 +121,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                         showerImages.forEach(i -> out.collect(Tuple2.of(i, numberOfTelescopes)));
                     }
 
-                })
+                }).setParallelism(mapParallelism)
                 .map(new MapFunction<Tuple2<ShowerImage, Integer>, Tuple2<Moments, Integer>>() {
 
                     @Override
@@ -127,12 +130,14 @@ public class DistributeImages implements Callable<Void>, Serializable {
                         return  Tuple2.of(moments, value.f1);
                     }
                 })
+                .setParallelism(mapParallelism)
                 .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
                     @Override
                     public boolean filter(Tuple2<Moments, Integer> value) throws Exception {
                         return value.f0.numberOfPixel > 4;
                     }
                 })
+                .setParallelism(mapParallelism)
                 .map(new RichMapFunction<Tuple2<Moments,Integer>, Tuple2<Moments, Double>>() {
 
                     private TreeEnsemblePredictor model;
