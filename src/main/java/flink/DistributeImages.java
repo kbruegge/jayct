@@ -211,8 +211,9 @@ public class DistributeImages implements Callable<Void>, Serializable {
                         return Tuple5.of(timestamp, x, y, z, value.f1);
                     }
                 })
+                .setParallelism(sinkParallelism)
                 .writeAsCsv(outputFile, FileSystem.WriteMode.OVERWRITE)
-                .setParallelism( sinkParallelism);
+                .setParallelism(sinkParallelism);
 
         return env;
     }
