@@ -8,6 +8,7 @@ import org.apache.flink.api.common.functions.*;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.api.java.tuple.Tuple5;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -83,8 +84,9 @@ public class DistributeImages implements Callable<Void>, Serializable {
         }
 
 
-        System.out.println("Reading data from file: " + inputFile );
+        System.out.println("Reading data from file: " + inputFile);
         System.out.println("Reading classifier from file: " +  modelFile);
+        System.out.println("Writing result to file: " +  outputFile);
 
 
         StreamExecutionEnvironment env = flinkPlan();
@@ -196,14 +198,14 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 })
                 .setParallelism( windowParallelism)
                 .rescale()
-                .map(new MapFunction<Tuple2<ReconstrucedEvent, Double>, Tuple4<String, Double, Double, Double>>() {
+                .map(new MapFunction<Tuple2<ReconstrucedEvent, Double>, Tuple5<String, Double, Double, Double, Double>>() {
                     @Override
-                    public Tuple4<String, Double, Double, Double> map(Tuple2<ReconstrucedEvent, Double> value) throws Exception {
+                    public Tuple5<String, Double, Double, Double, Double> map(Tuple2<ReconstrucedEvent, Double> value) throws Exception {
                         String timestamp = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                         double x = value.f0.direction.getX();
                         double y = value.f0.direction.getY();
                         double z = value.f0.direction.getZ();
-                        return Tuple4.of(timestamp, x, y, z);
+                        return Tuple5.of(timestamp, x, y, z, value.f1);
                     }
                 })
                 .writeAsCsv(outputFile, FileSystem.WriteMode.OVERWRITE)
