@@ -10,4 +10,5 @@ all: result.pdf
 
 
 result.pdf: ./build/FINISHED_MEASUREMENT
-	python3 plot_csv_results.py ./build/ -o result.pdf
+    mkdir -p ./build/plots/
+	python3 plot_csv_results.py ./build/ -o ./build/plots/result.pdf
