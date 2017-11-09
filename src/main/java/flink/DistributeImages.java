@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
  * Testing the apache flink framework
- * Created by mackaiver on 25/09/17.
  */
 @CommandLine.Command(name = "Test Flink", description = "Executes CTA analysis with Apache Flink")
 public class DistributeImages implements Callable<Void>, Serializable {
@@ -49,6 +48,9 @@ public class DistributeImages implements Callable<Void>, Serializable {
 
     @CommandLine.Option(names = {"-l", "--length"}, description = "Number of seconds this stream generates data.")
     int numberOfSecondsToStream= 120;
+
+    @CommandLine.Option(names = {"-m", "--map-parallelism"})
+    int mapParallelism = 4;
 
     @CommandLine.Option(names = {"-w", "--window-parallelism"})
     int windowParallelism = 4;
@@ -162,6 +164,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                         return Tuple2.of(m, (double)p);
                     }
                 })
+                .setParallelism(mapParallelism)
                 .keyBy(new KeySelector<Tuple2<Moments,Double>, Long>() {
                     @Override
                     public Long getKey(Tuple2<Moments, Double> value) throws Exception {
