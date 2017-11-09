@@ -42,7 +42,7 @@ dependencies {
 shadowJar {
     baseName = 'jayct'
     manifest {
-        attributes 'Main-Class': 'flink.Test'
+        attributes 'Main-Class': 'flink.DistributeImages'
     }
 
     transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
