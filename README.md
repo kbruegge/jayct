@@ -25,6 +25,16 @@ We tried to keep it simple. Heres an example of how to reconstruct event directi
         }
 ```
 
+Same goes for the interfaces of the containers holding some data. Here is what the tailcut implementation looks like.
+
+
+
+        // dilate the shower
+        for (int l = 1; l < levels.length; l++) {
+            showerImage.dilate(image, levels[l]);
+        }
+        
+        
 ## Execution on Apache Flink
 
 There are two ways to distribute the calculations
