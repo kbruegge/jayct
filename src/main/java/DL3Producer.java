@@ -1,9 +1,17 @@
+import hexmap.TelescopeArray;
 import io.CSVWriter;
 import io.ImageReader;
 import ml.TreeEnsemblePredictor;
+import ml.Vectorizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
+import reconstruction.DirectionReconstruction;
+import reconstruction.HillasParametrization;
+import reconstruction.TailCut;
+import reconstruction.containers.Moments;
+import reconstruction.containers.ReconstrucedEvent;
+import reconstruction.containers.ShowerImage;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -49,13 +57,14 @@ public class DL3Producer implements Callable<Void> {
             return null;
         }
 
+        TreeEnsemblePredictor model = new TreeEnsemblePredictor(Paths.get(modelFile));
+
         List<Path> paths = Files.list(Paths.get(inputFolder))
                 .filter(p -> p.toString().endsWith(".json") || p.toString().endsWith(".json.gz"))
                 .sorted()
                 .collect(toList());
 
         CSVWriter writer = new CSVWriter(new File(outputFile));
-        FullChain chain = new FullChain(new TreeEnsemblePredictor(Paths.get(modelFile)));
 
         for (Path p : paths) {
 
@@ -63,14 +72,54 @@ public class DL3Producer implements Callable<Void> {
 
             ImageReader events = ImageReader.fromPath(p);
             for (ImageReader.Event event : events) {
-                log.info("Analyzing Event: {}", event);
-                chain.analyze(event).ifPresent(dl3 -> {
-                        writer.appendUnchecked(dl3.reconstrucedEvent, dl3.particlePrediction);
-                });
+                List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
+                List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
+
+                ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+
+                double prediction = predictParticleType(moments, model);
+
+                writer.append(reconstrucedEvent, prediction);
+
             }
         }
 
         return null;
+    }
+
+    private ReconstrucedEvent reconstructEvent(ImageReader.Event event){
+
+        List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
+        List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
+
+        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+
+        return reconstrucedEvent;
+    }
+
+    private double predictParticleType(List<Moments> moments, TreeEnsemblePredictor model){
+        int numberOfTriggeredTelescopes = moments.size();
+
+        return moments.stream()
+                .map(m ->
+                        new Vectorizer().of(
+                                numberOfTriggeredTelescopes,
+                                m.numberOfPixel,
+                                m.width,
+                                m.length,
+                                m.skewness,
+                                m.kurtosis,
+                                m.phi,
+                                m.miss,
+                                m.size,
+                                TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
+                        ).createFloatVector()
+                )
+                .mapToDouble(f ->
+                        (double) model.predictProba(f)[0]
+                )
+                .average()
+                .orElse(0);
     }
 
 }
