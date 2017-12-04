@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.List;
 
 
 /**
@@ -56,6 +55,21 @@ public class CSVWriter implements Serializable{
         writer.println(s);
         writer.flush();
     }
+
+    /**
+     * Same as {@link CSVWriter#append }just without throwing a checked exception
+     *
+     * @param e same as {@link CSVWriter#append}
+     * @param classPrediction same as {@link CSVWriter#append}
+     */
+    public void appendUnchecked(ReconstrucedEvent e, double classPrediction){
+        try {
+            append(e, classPrediction);
+        } catch (IOException e1) {
+            throw new RuntimeException(e1);
+        }
+    }
+
 
     /**
      * Write the given strings as a row to the CSV file. usefull for writing the header.

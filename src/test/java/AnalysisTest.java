@@ -16,7 +16,6 @@ import reconstruction.containers.Moments;
 import reconstruction.containers.ReconstrucedEvent;
 import reconstruction.containers.ShowerImage;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -39,7 +38,7 @@ public class AnalysisTest {
 
     @Test
     public void testStereoParameters() throws IOException {
-        URL url = ImageReader.class.getResource("/images.json.gz");
+        URL url = ImageReader.class.getResource("/data/images.json.gz");
 
         ImageReader events = ImageReader.fromURL(url);
 
@@ -61,7 +60,7 @@ public class AnalysisTest {
 
     @Test
     public void testFullChain() throws IOException, URISyntaxException {
-        URL url = ImageReader.class.getResource("/images.json.gz");
+        URL url = ImageReader.class.getResource("/data/images.json.gz");
         URL predictorURL = ImageReader.class.getResource("/classifier.json");
 
         TemporaryFolder folder = new TemporaryFolder();
@@ -111,7 +110,7 @@ public class AnalysisTest {
 
     @Test
     public void testMomentsStream() throws IOException {
-        URL url = ImageReader.class.getResource("/images.json.gz");
+        URL url = ImageReader.class.getResource("/data/images.json.gz");
         ImageReader events = ImageReader.fromURL(url);
 
 
@@ -132,7 +131,7 @@ public class AnalysisTest {
 
     @Test
     public void testPrediction() throws IOException, URISyntaxException {
-        ImageReader events = ImageReader.fromURL(ImageReader.class.getResource("/images.json.gz"));
+        ImageReader events = ImageReader.fromURL(ImageReader.class.getResource("/data/images.json.gz"));
 
         URL predictorURL = ImageReader.class.getResource("/classifier.json");
 
@@ -170,7 +169,7 @@ public class AnalysisTest {
 
     @Test
     public void testParallelStream() throws IOException, URISyntaxException {
-        ImageReader events = ImageReader.fromURL(ImageReader.class.getResource("/images.json.gz"));
+        ImageReader events = ImageReader.fromURL(ImageReader.class.getResource("/data/images.json.gz"));
         List<ImageReader.Event> eventList = events.stream().collect(toList());
 
         URL predictorURL = ImageReader.class.getResource("/classifier.json");

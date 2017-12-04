@@ -14,7 +14,7 @@ public class ImageReaderTest {
 
     @Test
     public void testReader() throws IOException {
-        URL url = ImageReader.class.getResource("/images.json.gz");
+        URL url = ImageReader.class.getResource("/data/images.json.gz");
         ImageReader events = ImageReader.fromURL(url);
 
         for (ImageReader.Event e : events){

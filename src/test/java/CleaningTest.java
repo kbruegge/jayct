@@ -16,7 +16,7 @@ public class CleaningTest {
 
     @Test
     public void testTailCut() throws IOException {
-        URL url = ImageReader.class.getResource("/images.json.gz");
+        URL url = ImageReader.class.getResource("/data/images.json.gz");
         ImageReader events = ImageReader.fromURL(url);
         ImageReader.Event e = events.iterator().next();
 
