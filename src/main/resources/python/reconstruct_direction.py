@@ -9,6 +9,8 @@ from astropy.utils.exceptions import AstropyDeprecationWarning
 import numpy as np
 from tqdm import tqdm
 
+import os
+
 import Pyro4
 
 # do some horrible things to silencece astropy warnings in ctapipe
@@ -99,10 +101,13 @@ def dummy_function_h_max(self, hillas_dict, subarray, tel_phi):
 #             }
 
 
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, "../instrument_description.pkl")
+
 @Pyro4.expose
 class Reconstructor():
 
-    instrument = pickle.load(open("/Users/alexey/Documents/git.nosync/jayct/src/main/resources/instrument_description.pkl", 'rb'))
+    instrument = pickle.load(open(filename, 'rb'))
 
     #def reconstruct_direction(self, array_event_id, group, instrument):
     def reconstruct_direction(self, moments):
