@@ -5,13 +5,13 @@ import org.apache.flink.api.java.tuple.Tuple2;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import pythonbridge.PythonBridge;
+import pythonbridge.Utils;
 import reconstruction.containers.Moments;
 
 /**
@@ -32,17 +32,7 @@ public class ReconstructionAggregatePython implements AggregateFunction
     }
 
     private Object readResolve() {
-        try {
-            URL urlPath = this.getClass().getClassLoader().getResource(path);
-            if (urlPath != null) {
-                bridge = new PythonBridge(urlPath.getPath());
-            } else {
-                System.out.println("Path to the python file is not right.\nStopping the programm...");
-                System.exit(-1);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        bridge = Utils.initPythonBridge(path);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
