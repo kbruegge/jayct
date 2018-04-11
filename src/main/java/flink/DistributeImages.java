@@ -15,19 +15,16 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 import picocli.CommandLine;
-import reconstruction.DirectionReconstruction;
+import pythonbridge.ReconstructionAggregatePython;
 import reconstruction.HillasParametrization;
 import reconstruction.TailCut;
 import reconstruction.containers.Moments;
-import reconstruction.containers.ReconstrucedEvent;
 import reconstruction.containers.ShowerImage;
 
 import java.io.Serializable;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
@@ -128,34 +125,8 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
                 })
                 .timeWindow(Time.seconds(windowSize))
-                .aggregate(new AggregateFunction<Tuple2<Moments,Double>, ArrayList<Tuple2<Moments,Double>>, Tuple2<ReconstrucedEvent, Double>>() {
-                    @Override
-                    public ArrayList<Tuple2<Moments, Double>> createAccumulator() {
-                        return new ArrayList<>();
-                    }
-
-                    @Override
-                    public void add(Tuple2<Moments, Double> value, ArrayList<Tuple2<Moments, Double>>  accumulator) {
-                        accumulator.add(value);
-                    }
-
-                    @Override
-                    public Tuple2<ReconstrucedEvent, Double> getResult(ArrayList<Tuple2<Moments, Double>>  accumulator) {
-                        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(accumulator.stream().map(v -> v.f0).collect(Collectors.toList()), 1, 2);
-                        double avg = accumulator.stream().mapToDouble(v -> v.f1).average().orElse(0);
-
-                        return Tuple2.of(reconstrucedEvent, avg);
-                    }
-
-                    @Override
-                    public ArrayList<Tuple2<Moments, Double>>  merge(ArrayList<Tuple2<Moments, Double>>  a, ArrayList<Tuple2<Moments, Double>>  b) {
-                        ArrayList<Tuple2<Moments, Double>> c = new ArrayList<>();
-                        c.addAll(a);
-                        c.addAll(b);
-                        return c;
-                    }
-                })
-                .setParallelism( windowParallelism)
+                .aggregate(new ReconstructionAggregatePython())
+                .setParallelism(windowParallelism)
                 .rescale()
                 .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
                 .setParallelism(sinkParallelism);
