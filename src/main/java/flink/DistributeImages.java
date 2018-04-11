@@ -18,7 +18,7 @@ import java.util.concurrent.Callable;
 import io.ImageReader;
 import ml.TreeEnsemblePredictorRichMap;
 import picocli.CommandLine;
-import pythonbridge.ReconstructionAggregatePython;
+import reconstruction.ReconstructionAggregatePython;
 import reconstruction.HillasParametrization;
 import reconstruction.TailCut;
 import reconstruction.containers.Moments;

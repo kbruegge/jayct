@@ -1,4 +1,4 @@
-package pythonbridge;
+package reconstruction;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
@@ -11,16 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import reconstruction.DirectionReconstruction;
+import pythonbridge.PythonBridge;
 import reconstruction.containers.Moments;
-import reconstruction.containers.ReconstrucedEvent;
 
 /**
  * Created by alexey on 10.04.18.
  */
 public class ReconstructionAggregatePython implements AggregateFunction
         <Tuple2<Moments, Double>, ArrayList<Tuple2<Moments, Double>>,
-        Tuple2<HashMap<String, String>, Double>>, Serializable {
+                Tuple2<HashMap<String, String>, Double>>, Serializable {
 
     private PythonBridge bridge;
 
@@ -33,7 +32,6 @@ public class ReconstructionAggregatePython implements AggregateFunction
     }
 
     private Object readResolve() {
-        System.out.println("read resolve python");
         try {
             URL urlPath = this.getClass().getClassLoader().getResource(path);
             if (urlPath != null) {
@@ -45,7 +43,7 @@ public class ReconstructionAggregatePython implements AggregateFunction
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Runtime.getRuntime().addShutdownHook(new Thread(){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
                     bridge.close();
