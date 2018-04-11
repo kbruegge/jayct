@@ -121,7 +121,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
                 })
                 .timeWindow(Time.seconds(windowSize))
-                .aggregate(new ReconstructionAggregatePython("python/helloworld.py", "process"))
+                .aggregate(new ReconstructionAggregatePython("python/reconstruct_direction.py", "reconstruct_direction"))
                 .setParallelism(windowParallelism)
                 .rescale()
                 .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)

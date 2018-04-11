@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import reconstruction.DirectionReconstruction;
@@ -69,7 +71,8 @@ public class ReconstructionAggregatePython implements AggregateFunction
     @Override
     public Tuple2<ReconstrucedEvent, Double> getResult(ArrayList<Tuple2<Moments, Double>> accumulator) {
         try {
-            Object result = bridge.callMethod(method, "checkcheckcheck");
+            List<HashMap<String, Object>> hashMaps = accumulator.stream().map(v -> v.f0.toMap()).collect(Collectors.toList());
+            Object result = bridge.callMethod(method, hashMaps);
             System.out.println(result);
         } catch (IOException e) {
             e.printStackTrace();
