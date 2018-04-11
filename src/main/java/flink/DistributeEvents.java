@@ -77,7 +77,7 @@ public class DistributeEvents implements Callable<Void>, Serializable {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        env.addSource(new InfinteEventSource(inputFile))
+        env.addSource(new InfiniteEventSource(inputFile))
             .setParallelism( sourceParallelism)
             .map(new RichMapFunction<ImageReader.Event, Tuple2<ReconstrucedEvent, Double>>() {
 
