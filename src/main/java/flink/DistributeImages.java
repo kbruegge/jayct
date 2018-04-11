@@ -18,6 +18,7 @@ import java.util.concurrent.Callable;
 import io.ImageReader;
 import ml.TreeEnsemblePredictorRichMap;
 import picocli.CommandLine;
+import reconstruction.HillasParametrizationPythonMap;
 import reconstruction.ReconstructionAggregatePython;
 import reconstruction.HillasParametrization;
 import reconstruction.TailCut;
@@ -99,14 +100,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
 
                 })
-                .map(new MapFunction<Tuple2<ShowerImage, Integer>, Tuple2<Moments, Integer>>() {
-
-                    @Override
-                    public Tuple2<Moments, Integer> map(Tuple2<ShowerImage, Integer> value) throws Exception {
-                        Moments moments = HillasParametrization.fromShowerImage(value.f0);
-                        return Tuple2.of(moments, value.f1);
-                    }
-                })
+                .map(new HillasParametrizationPythonMap("", ""))
                 .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
                     @Override
                     public boolean filter(Tuple2<Moments, Integer> value) throws Exception {
