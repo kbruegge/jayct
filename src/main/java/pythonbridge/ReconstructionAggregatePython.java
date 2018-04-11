@@ -1,12 +1,11 @@
 package pythonbridge;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
-import org.apache.flink.api.common.functions.RichAggregateFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.configuration.Configuration;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,9 @@ import reconstruction.containers.ReconstrucedEvent;
 /**
  * Created by alexey on 10.04.18.
  */
-public class ReconstructionAggregatePython implements AggregateFunction<Tuple2<Moments, Double>, ArrayList<Tuple2<Moments, Double>>, Tuple2<ReconstrucedEvent, Double>>, Serializable {
+public class ReconstructionAggregatePython implements AggregateFunction
+        <Tuple2<Moments, Double>, ArrayList<Tuple2<Moments, Double>>,
+        Tuple2<ReconstrucedEvent, Double>>, Serializable {
 
     private PythonBridge bridge;
 
@@ -32,26 +33,28 @@ public class ReconstructionAggregatePython implements AggregateFunction<Tuple2<M
     private Object readResolve() {
         System.out.println("read resolve python");
         try {
-            bridge = new PythonBridge(path);
+            URL urlPath = this.getClass().getClassLoader().getResource(path);
+            if (urlPath != null) {
+                bridge = new PythonBridge(urlPath.getPath());
+            } else {
+                System.out.println("Path to the python file is not right.\nStopping the programm...");
+                System.exit(-1);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            public void run() {
+                try {
+                    bridge.close();
+                    System.out.println("Close the bridge.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         return this;
     }
-//    @Override
-//    public void open(Configuration parameters) throws Exception {
-//        super.open(parameters);
-//        bridge = new PythonBridge(parameters.getString("path", ""));
-//        method = parameters.getString("method", "");
-//        // see python processor and python context
-//    }
-//
-//    @Override
-//    public void close() throws Exception {
-//        // see python processor and python context
-//        bridge.close();
-//        super.close();
-//    }
 
     @Override
     public ArrayList<Tuple2<Moments, Double>> createAccumulator() {
@@ -59,14 +62,18 @@ public class ReconstructionAggregatePython implements AggregateFunction<Tuple2<M
     }
 
     @Override
-    public void add(Tuple2<Moments, Double> value, ArrayList<Tuple2<Moments, Double>>  accumulator) {
+    public void add(Tuple2<Moments, Double> value, ArrayList<Tuple2<Moments, Double>> accumulator) {
         accumulator.add(value);
     }
 
     @Override
-    public Tuple2<ReconstrucedEvent, Double> getResult(ArrayList<Tuple2<Moments, Double>>  accumulator) {
-        //TODO: call the bridge!
-        //bridge.callMethod(method, ...)
+    public Tuple2<ReconstrucedEvent, Double> getResult(ArrayList<Tuple2<Moments, Double>> accumulator) {
+        try {
+            Object result = bridge.callMethod(method, "checkcheckcheck");
+            System.out.println(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(
                 accumulator.stream().map(v -> v.f0).collect(Collectors.toList()), 1, 2);
         double avg = accumulator.stream().mapToDouble(v -> v.f1).average().orElse(0);
@@ -75,7 +82,7 @@ public class ReconstructionAggregatePython implements AggregateFunction<Tuple2<M
     }
 
     @Override
-    public ArrayList<Tuple2<Moments, Double>>  merge(ArrayList<Tuple2<Moments, Double>>  a, ArrayList<Tuple2<Moments, Double>>  b) {
+    public ArrayList<Tuple2<Moments, Double>> merge(ArrayList<Tuple2<Moments, Double>> a, ArrayList<Tuple2<Moments, Double>> b) {
         ArrayList<Tuple2<Moments, Double>> c = new ArrayList<>();
         c.addAll(a);
         c.addAll(b);
