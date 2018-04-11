@@ -20,7 +20,7 @@ import reconstruction.containers.ReconstrucedEvent;
  */
 public class ReconstructionAggregatePython implements AggregateFunction
         <Tuple2<Moments, Double>, ArrayList<Tuple2<Moments, Double>>,
-        Tuple2<ReconstrucedEvent, Double>>, Serializable {
+        Tuple2<HashMap<String, String>, Double>>, Serializable {
 
     private PythonBridge bridge;
 
@@ -69,19 +69,16 @@ public class ReconstructionAggregatePython implements AggregateFunction
     }
 
     @Override
-    public Tuple2<ReconstrucedEvent, Double> getResult(ArrayList<Tuple2<Moments, Double>> accumulator) {
+    public Tuple2<HashMap<String, String>, Double> getResult(ArrayList<Tuple2<Moments, Double>> accumulator) {
         try {
             List<HashMap<String, Object>> hashMaps = accumulator.stream().map(v -> v.f0.toMap()).collect(Collectors.toList());
-            Object result = bridge.callMethod(method, hashMaps);
-            System.out.println(result);
+            HashMap<String, String> result = (HashMap<String, String>) bridge.callMethod(method, hashMaps);
+            double avg = accumulator.stream().mapToDouble(v -> v.f1).average().orElse(0);
+            return Tuple2.of(result, avg);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(
-                accumulator.stream().map(v -> v.f0).collect(Collectors.toList()), 1, 2);
-        double avg = accumulator.stream().mapToDouble(v -> v.f1).average().orElse(0);
-
-        return Tuple2.of(reconstrucedEvent, avg);
+        return Tuple2.of(new HashMap<>(), Double.NaN);
     }
 
     @Override
