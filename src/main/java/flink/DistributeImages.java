@@ -3,6 +3,7 @@ package flink;
 import hexmap.TelescopeArray;
 import io.ImageReader;
 import ml.TreeEnsemblePredictor;
+import ml.TreeEnsemblePredictorRichMap;
 import ml.Vectorizer;
 import org.apache.flink.api.common.functions.*;
 import org.apache.flink.api.java.functions.KeySelector;
@@ -119,37 +120,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                         return value.f0.numberOfPixel > 4;
                     }
                 })
-                .map(new RichMapFunction<Tuple2<Moments,Integer>, Tuple2<Moments, Double>>() {
-
-                    private TreeEnsemblePredictor model;
-
-                    @Override
-                    public void open(Configuration parameters) throws Exception {
-                        super.open(parameters);
-                        this.model = new TreeEnsemblePredictor(Paths.get(modelFile));
-                    }
-
-                    @Override
-                    public Tuple2<Moments, Double> map(Tuple2<Moments, Integer> value) throws Exception {
-
-                        Moments m = value.f0;
-                        float[] vector = new Vectorizer().of(
-                                value.f1,
-                                m.numberOfPixel,
-                                m.width,
-                                m.length,
-                                m.skewness,
-                                m.kurtosis,
-                                m.phi,
-                                m.miss,
-                                m.size,
-                                TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                        ).createFloatVector();
-
-                        float p = model.predictProba(vector)[0];
-                        return Tuple2.of(m, (double)p);
-                    }
-                })
+                .map(new TreeEnsemblePredictorRichMap(modelFile))
                 .keyBy(new KeySelector<Tuple2<Moments,Double>, Long>() {
                     @Override
                     public Long getKey(Tuple2<Moments, Double> value) throws Exception {
@@ -187,7 +158,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 .setParallelism( windowParallelism)
                 .rescale()
                 .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
-                .setParallelism( sinkParallelism);
+                .setParallelism(sinkParallelism);
 
         return env;
     }
