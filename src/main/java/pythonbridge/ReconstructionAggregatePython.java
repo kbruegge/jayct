@@ -1,8 +1,12 @@
 package pythonbridge;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.functions.RichAggregateFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.configuration.Configuration;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -13,12 +17,27 @@ import reconstruction.containers.ReconstrucedEvent;
 /**
  * Created by alexey on 10.04.18.
  */
-public class ReconstructionAggregatePython implements AggregateFunction<Tuple2<Moments, Double>, ArrayList<Tuple2<Moments, Double>>, Tuple2<ReconstrucedEvent, Double>> {
+public class ReconstructionAggregatePython implements AggregateFunction<Tuple2<Moments, Double>, ArrayList<Tuple2<Moments, Double>>, Tuple2<ReconstrucedEvent, Double>>, Serializable {
 
     private PythonBridge bridge;
 
-    String method;
+    String path = "";
+    String method = "";
 
+    public ReconstructionAggregatePython(String path, String method) {
+        this.path = path;
+        this.method = method;
+    }
+
+    private Object readResolve() {
+        System.out.println("read resolve python");
+        try {
+            bridge = new PythonBridge(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
 //    @Override
 //    public void open(Configuration parameters) throws Exception {
 //        super.open(parameters);

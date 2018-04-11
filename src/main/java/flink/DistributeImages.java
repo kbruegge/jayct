@@ -1,19 +1,22 @@
 package flink;
 
-import hexmap.TelescopeArray;
-import io.ImageReader;
-import ml.TreeEnsemblePredictor;
-import ml.TreeEnsemblePredictorRichMap;
-import ml.Vectorizer;
-import org.apache.flink.api.common.functions.*;
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.Callable;
+
+import io.ImageReader;
+import ml.TreeEnsemblePredictorRichMap;
 import picocli.CommandLine;
 import pythonbridge.ReconstructionAggregatePython;
 import reconstruction.HillasParametrization;
@@ -21,15 +24,9 @@ import reconstruction.TailCut;
 import reconstruction.containers.Moments;
 import reconstruction.containers.ShowerImage;
 
-import java.io.Serializable;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.concurrent.Callable;
-
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
- * Testing the apache flink framework
- * Created by mackaiver on 25/09/17.
+ * Testing the apache flink framework Created by mackaiver on 25/09/17.
  */
 @CommandLine.Command(name = "Test Flink", description = "Executes CTA analysis with Apache Flink")
 public class DistributeImages implements Callable<Void>, Serializable {
@@ -47,7 +44,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
     @CommandLine.Option(names = {"-c", "--window-size"}, description = "Size of window in seconds.")
     int windowSize = 5;
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Displays this help message and quits.")
+    @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Displays this help message and quits.")
     boolean helpRequested = false;
 
     @CommandLine.Parameters(index = "0", paramLabel = "Input File for the images")
@@ -57,8 +54,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
     String modelFile = " ";
 
 
-
-    public static void main (String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         CommandLine.call(new DistributeImages(), System.out, args);
 
@@ -72,8 +68,8 @@ public class DistributeImages implements Callable<Void>, Serializable {
         }
 
 
-        System.out.println("Reading data from file: " + inputFile );
-        System.out.println("Reading classifier from file: " +  modelFile);
+        System.out.println("Reading data from file: " + inputFile);
+        System.out.println("Reading classifier from file: " + modelFile);
 
 
         StreamExecutionEnvironment env = flinkPlan();
@@ -81,8 +77,8 @@ public class DistributeImages implements Callable<Void>, Serializable {
 
         return null;
     }
-    
-    private StreamExecutionEnvironment flinkPlan(){
+
+    private StreamExecutionEnvironment flinkPlan() {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -90,7 +86,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
         DataStreamSource<ImageReader.Event> source = env.addSource(new InfiniteEventSource(inputFile));
 
         source
-                .setParallelism( sourceParallelism)
+                .setParallelism(sourceParallelism)
                 .rescale()
                 .flatMap(new FlatMapFunction<ImageReader.Event, Tuple2<ShowerImage, Integer>>() {
 
@@ -106,9 +102,9 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 .map(new MapFunction<Tuple2<ShowerImage, Integer>, Tuple2<Moments, Integer>>() {
 
                     @Override
-                    public Tuple2<Moments, Integer> map( Tuple2<ShowerImage, Integer> value) throws Exception {
+                    public Tuple2<Moments, Integer> map(Tuple2<ShowerImage, Integer> value) throws Exception {
                         Moments moments = HillasParametrization.fromShowerImage(value.f0);
-                        return  Tuple2.of(moments, value.f1);
+                        return Tuple2.of(moments, value.f1);
                     }
                 })
                 .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
@@ -118,14 +114,14 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
                 })
                 .map(new TreeEnsemblePredictorRichMap(modelFile))
-                .keyBy(new KeySelector<Tuple2<Moments,Double>, Long>() {
+                .keyBy(new KeySelector<Tuple2<Moments, Double>, Long>() {
                     @Override
                     public Long getKey(Tuple2<Moments, Double> value) throws Exception {
                         return value.f0.eventID;
                     }
                 })
                 .timeWindow(Time.seconds(windowSize))
-                .aggregate(new ReconstructionAggregatePython())
+                .aggregate(new ReconstructionAggregatePython("pfad", "methode"))
                 .setParallelism(windowParallelism)
                 .rescale()
                 .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
