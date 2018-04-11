@@ -35,6 +35,7 @@ dependencies {
     compile group: 'org.apache.flink', name: 'flink-java', version: '1.3.2'
     compile group: 'org.apache.flink', name: 'flink-streaming-java_2.10', version: '1.3.2'
     compile group: 'info.picocli', name: 'picocli', version: '1.0.1'
+    compile group: 'net.razorvine', name:'pyrolite', version: '4.+'
 
     testCompile group: 'org.jpmml', name: 'pmml-evaluator', version: '1.3.9'
 }
