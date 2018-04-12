@@ -1,10 +1,16 @@
 from ctapipe.reco import HillasReconstructor
+from ctapipe.image.hillas import hillas_parameters
+from ctapipe.image.cleaning import tailcuts_clean
+import numpy as np
 import pickle
+
 from collections import namedtuple
 import astropy.units as units
+
 import warnings
 from astropy.utils.exceptions import AstropyDeprecationWarning
-import numpy as np
+
+
 import os
 import Pyro4
 
@@ -68,16 +74,38 @@ class Reconstructor():
                 # 'h_max_prediction': reconstruction.h_max.si.value
                 }
 
-    def tail_cut(self, input):
+    def ping(self, something):
+        return something
+
+    def tail_cut(self, image, id):
         # Apply image cleaning
-        cleanmask = tailcuts_clean(geom, image, picture_thresh=200, boundary_thresh=100)
+
+
+
+        cleanmask = tailcuts_clean(geom, image, picture_thresh=10, boundary_thresh=5)
         clean = image.copy()
         clean[~cleanmask] = 0.0
 
 
-    def hillas_parametrization(self, input):
+    def hillas(self, image, id):
         # Calculate image parameters
+        geom = self.instrument.subarray.tel[id].camera
+        print(geom)
+        image = np.array(image)
+        print(image.shape)
         hillas = hillas_parameters(geom, image)
-        #hillas = hillas_parameters(geom, clean)
-        return input
+
+        d = {'size':hillas.size,
+             'width':hillas.width.value,
+             'length':hillas.length.value,
+             'cen_x':hillas.cen_x.value,
+             'cen_y':hillas.cen_y.value,
+             'r':hillas.r.value,
+             'psi':hillas.psi.value,
+             'phi':hillas.phi.value,
+             'skewness':hillas.skewness,
+             'kurtosis':hillas.kurtosis,
+             'miss':hillas.miss.value,
+             }
+        return d
 
