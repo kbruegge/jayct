@@ -103,6 +103,16 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
                     .add("timestamp", timestamp)
                     .toString();
         }
+
+        public HashMap<String, Object> toMap() {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("timestamp", timestamp);
+            map.put("images", images);
+            map.put("eventId", eventId);
+            map.put("mc", mc.toMap());
+            map.put("array", array.toMap());
+            return map;
+        }
     }
     /**
      * The Monte-Carlo information in the data contains the true values for direction and energy.
@@ -123,6 +133,17 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
                     .add("impact y", coreY)
                     .toString();
         }
+
+        public HashMap<String, Object> toMap() {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("energy", energy);
+            map.put("alt", alt);
+            map.put("az", az);
+            map.put("coreY", coreY);
+            map.put("coreX", coreX);
+            map.put("type", type);
+            return map;
+        }
     }
     /**
      * Information about the event which is not specific to one single camera but to
@@ -132,6 +153,13 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
     public class Array {
         public int[] triggeredTelescopes;
         public int numTriggeredTelescopes;
+
+        public HashMap<String, Object> toMap() {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("triggeredTelescopes", triggeredTelescopes);
+            map.put("numTriggeredTelescopes", numTriggeredTelescopes);
+            return map;
+        }
     }
 
     /**
@@ -179,7 +207,6 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
         return StreamSupport.stream(this.spliterator(), false);
     }
 
-
     private ImageReader(InputStream inputStream) throws IOException {
 
         this.inputStream = inputStream;
@@ -201,10 +228,6 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
         reader = new JsonReader(streamReader);
         reader.beginArray();
     }
-
-
-
-
 
     /**
      * Generates a list of N events sampled with replacement from the underlying file.
