@@ -95,6 +95,7 @@ public class PythonBridge implements AutoCloseable {
 
             NameServerProxy nsProxy = NameServerProxy.locateNS("localhost");
 
+            //TODO: use different NameServers (per File?) for higher parallelism
             remoteObject = new PyroProxy(nsProxy.lookup("streams.processors"));
         } catch (IOException | InterruptedException e) {
             pythonProcess.destroyForcibly();
@@ -131,7 +132,7 @@ public class PythonBridge implements AutoCloseable {
             logPythonOutput(stdin);
 
             logPythonOutput(stderr);
-            
+
             return result;
         }
 

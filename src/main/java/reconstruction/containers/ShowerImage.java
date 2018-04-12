@@ -36,6 +36,9 @@ public class ShowerImage implements Serializable {
         this.eventId = eventId;
     }
 
+    /**
+     * Transform this object into a simple HashMap that can be passed to a python script.
+     */
     public HashMap<String, Object> toMap() {
         HashMap<String, Object> map = new HashMap<>();
         map.put("cameraId", cameraId);
