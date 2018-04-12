@@ -95,6 +95,7 @@ public class PythonBridge implements AutoCloseable {
 
             NameServerProxy nsProxy = NameServerProxy.locateNS("localhost");
 
+            //TODO: use different NameServers (per File?) for higher parallelism
             remoteObject = new PyroProxy(nsProxy.lookup("streams.processors"));
         } catch (IOException | InterruptedException e) {
             pythonProcess.destroyForcibly();
@@ -122,16 +123,19 @@ public class PythonBridge implements AutoCloseable {
      * @throws IOException in case an error occurs when calling the python method.
      */
     public Object callMethod(String name, Object... args) throws IOException {
-        BufferedReader stdin = new BufferedReader(new InputStreamReader(pythonProcess.getInputStream()));
-        BufferedReader stderr = new BufferedReader(new InputStreamReader(pythonProcess.getErrorStream()));
+        synchronized (this) {
+            BufferedReader stdin = new BufferedReader(new InputStreamReader(pythonProcess.getInputStream()));
+            BufferedReader stderr = new BufferedReader(new InputStreamReader(pythonProcess.getErrorStream()));
 
-        Object result = remoteObject.call(name, args);
+            Object result = remoteObject.call(name, args);
 
-        logPythonOutput(stdin);
+            logPythonOutput(stdin);
 
-        logPythonOutput(stderr);
+            logPythonOutput(stderr);
 
-        return result;
+            return result;
+        }
+
     }
 
     /**

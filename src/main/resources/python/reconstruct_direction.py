@@ -108,4 +108,3 @@ class Reconstructor():
              'miss':hillas.miss.value,
              }
         return d
-

@@ -56,7 +56,8 @@ public class ReconstructionAggregatePython implements AggregateFunction
     @Override
     public Tuple2<HashMap<String, String>, Double> getResult(ArrayList<Tuple2<Moments, Double>> accumulator) {
         try {
-            List<HashMap<String, Object>> hashMaps = accumulator.stream().map(v -> v.f0.toMap()).collect(Collectors.toList());
+            List<HashMap<String, Object>> hashMaps = accumulator.stream()
+                    .map(v -> v.f0.toMap()).collect(Collectors.toList());
             HashMap<String, String> result = (HashMap<String, String>) bridge.callMethod(method, hashMaps);
             double avg = accumulator.stream().mapToDouble(v -> v.f1).average().orElse(0);
             return Tuple2.of(result, avg);

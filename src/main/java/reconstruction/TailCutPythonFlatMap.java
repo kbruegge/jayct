@@ -5,6 +5,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.ImageReader;
@@ -37,7 +38,8 @@ public class TailCutPythonFlatMap extends RichFlatMapFunction<ImageReader.Event,
 
     @Override
     public void flatMap(ImageReader.Event event, Collector<Tuple2<ShowerImage, Integer>> out) throws Exception {
-        //bridge.callMethod(method, out);
+        HashMap<String, Object> map = event.toMap();
+        //bridge.callMethod(method, map);
         List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
         int numberOfTelescopes = event.array.numTriggeredTelescopes;
         showerImages.forEach(showerImage -> out.collect(Tuple2.of(showerImage, numberOfTelescopes)));
