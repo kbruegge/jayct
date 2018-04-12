@@ -34,7 +34,7 @@ public class HillasParametrizationPythonMap extends RichMapFunction<Tuple2<Showe
 
     @Override
     public Tuple2<Moments, Integer> map(Tuple2<ShowerImage, Integer> value) throws Exception {
-        Object result = bridge.callMethod(method, value.f0);
+        Object result = bridge.callMethod(method, value.f0.toMap());
         System.out.println(result);
         Moments moments = HillasParametrization.fromShowerImage(value.f0);
         return Tuple2.of(moments, value.f1);

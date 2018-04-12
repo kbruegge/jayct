@@ -76,8 +76,10 @@ class Reconstructor():
 
 
     def hillas_parametrization(self, input):
+        print("hello world")
+        print((input["image"])[0:10])
         # Calculate image parameters
-        hillas = hillas_parameters(geom, image)
+        #hillas = hillas_parameters(geom, image)
         #hillas = hillas_parameters(geom, clean)
         return input
 
