@@ -1,18 +1,14 @@
 package flink;
 
 import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.util.Collector;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import io.ImageReader;
@@ -20,10 +16,8 @@ import ml.TreeEnsemblePredictorRichMap;
 import picocli.CommandLine;
 import reconstruction.HillasParametrizationPythonMap;
 import reconstruction.ReconstructionAggregatePython;
-import reconstruction.HillasParametrization;
-import reconstruction.TailCut;
+import reconstruction.TailCutPythonFlatMap;
 import reconstruction.containers.Moments;
-import reconstruction.containers.ShowerImage;
 
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
@@ -89,18 +83,8 @@ public class DistributeImages implements Callable<Void>, Serializable {
         source
                 .setParallelism(sourceParallelism)
                 .rescale()
-                .flatMap(new FlatMapFunction<ImageReader.Event, Tuple2<ShowerImage, Integer>>() {
-
-                    @Override
-                    public void flatMap(ImageReader.Event event, Collector<Tuple2<ShowerImage, Integer>> out) throws Exception {
-
-                        List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-                        int numberOfTelescopes = event.array.numTriggeredTelescopes;
-                        showerImages.forEach(i -> out.collect(Tuple2.of(i, numberOfTelescopes)));
-                    }
-
-                })
-                .map(new HillasParametrizationPythonMap("python/pyroserver.py", ""))
+                .flatMap(new TailCutPythonFlatMap("tail_cut"))
+                .map(new HillasParametrizationPythonMap("hillas_parametrization"))
                 .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
                     @Override
                     public boolean filter(Tuple2<Moments, Integer> value) throws Exception {
@@ -115,8 +99,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
                 })
                 .timeWindow(Time.seconds(windowSize))
-//                .aggregate(new ReconstructionAggregatePython("python/reconstruct_direction.py", "reconstruct_direction"))
-                .aggregate(new ReconstructionAggregatePython("python/pyroserver.py", "reconstruct_direction"))
+                .aggregate(new ReconstructionAggregatePython("reconstruct_direction"))
                 .setParallelism(windowParallelism)
                 .rescale()
                 .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)

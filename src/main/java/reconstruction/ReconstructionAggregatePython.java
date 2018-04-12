@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import pythonbridge.PythonBridge;
-import pythonbridge.Utils;
 import reconstruction.containers.Moments;
 
 /**
@@ -23,16 +22,14 @@ public class ReconstructionAggregatePython implements AggregateFunction
 
     private PythonBridge bridge;
 
-    String path = "";
     String method = "";
 
-    public ReconstructionAggregatePython(String path, String method) {
-        this.path = path;
+    public ReconstructionAggregatePython(String method) {
         this.method = method;
     }
 
     private Object readResolve() {
-        bridge = Utils.initPythonBridge(path);
+        bridge = PythonBridge.getInstance();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {

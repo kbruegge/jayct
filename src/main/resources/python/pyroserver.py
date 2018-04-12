@@ -5,7 +5,7 @@ from reconstruct_direction import Reconstructor
 def main():
     Pyro4.Daemon.serveSimple(
             {
-                Reconstructor: 'streams.processors'
+                Reconstructor: 'streams.processors',
             },
             ns=True
     )

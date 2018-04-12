@@ -68,3 +68,16 @@ class Reconstructor():
                 # 'h_max_prediction': reconstruction.h_max.si.value
                 }
 
+    def tail_cut(self, input):
+        # Apply image cleaning
+        cleanmask = tailcuts_clean(geom, image, picture_thresh=200, boundary_thresh=100)
+        clean = image.copy()
+        clean[~cleanmask] = 0.0
+
+
+    def hillas_parametrization(self, input):
+        # Calculate image parameters
+        hillas = hillas_parameters(geom, image)
+        #hillas = hillas_parameters(geom, clean)
+        return input
+

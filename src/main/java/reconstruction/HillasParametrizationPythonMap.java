@@ -5,7 +5,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 
 import pythonbridge.PythonBridge;
-import pythonbridge.Utils;
 import reconstruction.containers.Moments;
 import reconstruction.containers.ShowerImage;
 
@@ -15,20 +14,16 @@ import reconstruction.containers.ShowerImage;
 public class HillasParametrizationPythonMap extends RichMapFunction<Tuple2<ShowerImage, Integer>, Tuple2<Moments, Integer>> {
 
     private PythonBridge bridge = null;
-    String path = "";
     String method = "";
 
-    public HillasParametrizationPythonMap(String path, String method) {
-        this.path = path;
+    public HillasParametrizationPythonMap(String method) {
         this.method = method;
     }
 
     @Override
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);
-        if (!path.equals("")) {
-            bridge = Utils.initPythonBridge(path);
-        }
+        bridge = PythonBridge.getInstance();
     }
 
     @Override
@@ -39,7 +34,8 @@ public class HillasParametrizationPythonMap extends RichMapFunction<Tuple2<Showe
 
     @Override
     public Tuple2<Moments, Integer> map(Tuple2<ShowerImage, Integer> value) throws Exception {
-        //Object result = bridge.callMethod(method, );
+        Object result = bridge.callMethod(method, value.f0);
+        System.out.println(result);
         Moments moments = HillasParametrization.fromShowerImage(value.f0);
         return Tuple2.of(moments, value.f1);
     }
