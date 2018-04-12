@@ -18,6 +18,7 @@ import reconstruction.HillasParametrizationPythonMap;
 import reconstruction.ReconstructionAggregatePython;
 import reconstruction.TailCutPythonFlatMap;
 import reconstruction.containers.Moments;
+import reconstruction.containers.ShowerImage;
 
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
@@ -28,13 +29,13 @@ public class DistributeImages implements Callable<Void>, Serializable {
 
 
     @CommandLine.Option(names = {"-p", "--source-parallelism"})
-    int sourceParallelism = 4;
+    int sourceParallelism = 1;
 
     @CommandLine.Option(names = {"-s", "--sink-parallelism"})
-    int sinkParallelism = 4;
+    int sinkParallelism = 1;
 
     @CommandLine.Option(names = {"-w", "--window-parallelism"})
-    int windowParallelism = 4;
+    int windowParallelism = 1;
 
     @CommandLine.Option(names = {"-c", "--window-size"}, description = "Size of window in seconds.")
     int windowSize = 5;
@@ -76,15 +77,21 @@ public class DistributeImages implements Callable<Void>, Serializable {
     private StreamExecutionEnvironment flinkPlan() {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
+        env.setParallelism(1);
 
         DataStreamSource<ImageReader.Event> source = env.addSource(new InfiniteEventSource(inputFile));
 
         source
-                .setParallelism(sourceParallelism)
-                .rescale()
+//                .setParallelism(sourceParallelism)
+//                .rescale()
                 .flatMap(new TailCutPythonFlatMap("tail_cut"))
-                .map(new HillasParametrizationPythonMap("hillas_parametrization"))
+                .filter(new FilterFunction<Tuple2<ShowerImage, Integer>>() {
+                    @Override
+                    public boolean filter(Tuple2<ShowerImage, Integer> value) throws Exception {
+                        return value.f0.signalPixels.size() > 8;
+                    }
+                })
+                .map(new HillasParametrizationPythonMap("hillas"))
                 .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
                     @Override
                     public boolean filter(Tuple2<Moments, Integer> value) throws Exception {
@@ -100,10 +107,10 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 })
                 .timeWindow(Time.seconds(windowSize))
                 .aggregate(new ReconstructionAggregatePython("reconstruct_direction"))
-                .setParallelism(windowParallelism)
-                .rescale()
-                .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
-                .setParallelism(sinkParallelism);
+//                .setParallelism(windowParallelism)
+//                .rescale()
+                .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE);
+//                .setParallelism(sinkParallelism);
 
         return env;
     }

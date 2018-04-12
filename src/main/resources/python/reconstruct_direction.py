@@ -10,6 +10,8 @@ import astropy.units as units
 import warnings
 from astropy.utils.exceptions import AstropyDeprecationWarning
 
+import json
+import traceback
 
 import os
 import Pyro4
@@ -79,32 +81,47 @@ class Reconstructor():
 
     def tail_cut(self, image, id):
         # Apply image cleaning
-
-
-
         cleanmask = tailcuts_clean(geom, image, picture_thresh=10, boundary_thresh=5)
         clean = image.copy()
         clean[~cleanmask] = 0.0
 
 
-    def hillas(self, image, id):
+    def hillas(self, input):
         # Calculate image parameters
-        geom = self.instrument.subarray.tel[id].camera
-        print(geom)
-        image = np.array(image)
-        print(image.shape)
-        hillas = hillas_parameters(geom, image)
+        try:
+            image = input["image"]
+            id = input["cameraId"]
+            geom = self.instrument.subarray.tel[id].camera
+            image = np.array(image)
+            hillas = hillas_parameters(geom, image)
 
-        d = {'size':hillas.size,
-             'width':hillas.width.value,
-             'length':hillas.length.value,
-             'cen_x':hillas.cen_x.value,
-             'cen_y':hillas.cen_y.value,
-             'r':hillas.r.value,
-             'psi':hillas.psi.value,
-             'phi':hillas.phi.value,
-             'skewness':hillas.skewness,
-             'kurtosis':hillas.kurtosis,
-             'miss':hillas.miss.value,
-             }
-        return d
+            d = {'size':hillas.size,
+                 'width':hillas.width.value,
+                 'length':hillas.length.value,
+                 'cen_x':hillas.cen_x.value,
+                 'cen_y':hillas.cen_y.value,
+                 'r':hillas.r.value,
+                 'psi':hillas.psi.value,
+                 'phi':hillas.phi.value,
+                 'skewness':hillas.skewness,
+                 'kurtosis':hillas.kurtosis,
+                 'miss':hillas.miss.value,
+                 'eventId': input["eventId"],
+                 'cameraId': input["cameraId"]
+                 }
+            return d
+        except Exception as e:
+            print("FEHLER")
+            print(traceback.format_exc())
+            return {'size':np.nan,
+                    'width':np.nan,
+                    'length':np.nan,
+                    'cen_x':np.nan,
+                    'cen_y':np.nan,
+                    'r':np.nan,
+                    'psi':np.nan,
+                    'phi':np.nan,
+                    'skewness':np.nan,
+                    'kurtosis':np.nan,
+                    'miss':np.nan, 'eventId': input["eventId"], 'cameraId': input["cameraId"]
+                    }

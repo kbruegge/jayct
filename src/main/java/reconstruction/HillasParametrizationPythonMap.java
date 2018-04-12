@@ -4,6 +4,8 @@ import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 
+import java.util.HashMap;
+
 import pythonbridge.PythonBridge;
 import reconstruction.containers.Moments;
 import reconstruction.containers.ShowerImage;
@@ -34,10 +36,20 @@ public class HillasParametrizationPythonMap extends RichMapFunction<Tuple2<Showe
 
     @Override
     public Tuple2<Moments, Integer> map(Tuple2<ShowerImage, Integer> value) throws Exception {
-        Object result = bridge.callMethod(method, value.f0.toMap());
-        //TODO: use the result in the pipeline and adjust the following function to use it
-        //TODO: OR transform the result into moment? (worse performance!?)
-        Moments moments = HillasParametrization.fromShowerImage(value.f0);
+        HashMap<String, Double> result = (HashMap<String, Double>) bridge.callMethod(method, value.f0.toMap());
+        Moments moments = new Moments(value.f0.eventId, value.f0.cameraId, value.f0.cameraId,
+                value.f0.signalPixels.size(),
+                result.get("width"),
+                result.get("length"),
+                result.get("psi"),
+                result.get("skewness"),
+                result.get("kurtosis"),
+                result.get("phi"),
+                result.get("miss"),
+                result.get("r"),
+                result.get("cen_x"),
+                result.get("cen_y"),
+                result.get("size"));
         return Tuple2.of(moments, value.f1);
     }
 }

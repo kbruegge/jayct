@@ -1,9 +1,13 @@
+import com.google.common.collect.ImmutableMap;
+
 import org.junit.Test;
 import pythonbridge.PythonBridge;
 import reconstruction.containers.Moments;
+import scala.collection.mutable.ImmutableMapAdaptor;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class PythonTest {
@@ -33,7 +37,8 @@ public class PythonTest {
         for (int i = 0; i < b.length; i++) {
             b[i] = r.nextDouble() * 50;
         }
-        HashMap<String, Double> o = (HashMap<String, Double>) bridge.callMethod("hillas", b, 1);
+
+        HashMap<String, Double> o = (HashMap<String, Double>) bridge.callMethod("hillas", ImmutableMap.of("image", b, "cameraId", 1, "eventId", 5));
         bridge.close();
 
         Moments m = new Moments(1, 1, 2, 2,
