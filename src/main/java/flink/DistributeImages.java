@@ -100,7 +100,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
 
                 })
-                .map(new HillasParametrizationPythonMap("", ""))
+                .map(new HillasParametrizationPythonMap("python/pyroserver.py", ""))
                 .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
                     @Override
                     public boolean filter(Tuple2<Moments, Integer> value) throws Exception {
@@ -115,7 +115,8 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
                 })
                 .timeWindow(Time.seconds(windowSize))
-                .aggregate(new ReconstructionAggregatePython("python/reconstruct_direction.py", "reconstruct_direction"))
+//                .aggregate(new ReconstructionAggregatePython("python/reconstruct_direction.py", "reconstruct_direction"))
+                .aggregate(new ReconstructionAggregatePython("python/pyroserver.py", "reconstruct_direction"))
                 .setParallelism(windowParallelism)
                 .rescale()
                 .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
