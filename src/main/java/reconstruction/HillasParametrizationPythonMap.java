@@ -4,9 +4,6 @@ import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 
-import java.io.IOException;
-import java.net.URL;
-
 import pythonbridge.PythonBridge;
 import pythonbridge.Utils;
 import reconstruction.containers.Moments;
