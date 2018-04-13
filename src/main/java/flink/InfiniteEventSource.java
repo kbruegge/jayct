@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by mackaiver on 29/09/17.
  */
-public class InfinteEventSource implements ParallelSourceFunction<ImageReader.Event>{
+public class InfiniteEventSource implements ParallelSourceFunction<ImageReader.Event>{
 
     List<ImageReader.Event> events = null;
     Iterator<ImageReader.Event> cycle = null;
@@ -18,14 +18,14 @@ public class InfinteEventSource implements ParallelSourceFunction<ImageReader.Ev
 
     final String inputFile;
 
-    public InfinteEventSource(String inputFile) {
+    public InfiniteEventSource(String inputFile) {
         this.inputFile = inputFile;
     }
 
     @Override
         public void run(SourceContext<ImageReader.Event> ctx) throws Exception {
             if (events == null){
-                events = ImageReader.fromPathString(inputFile).getListOfRandomEvents(100);
+                events = ImageReader.fromPathString(inputFile).getListOfRandomEvents(500);
                 cycle = Iterables.cycle(events).iterator();
             }
             long i = 0;

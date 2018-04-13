@@ -2,6 +2,8 @@ package reconstruction.containers;
 
 import com.google.common.base.MoreObjects;
 
+import java.util.HashMap;
+
 
 /**
  * Stores all the important (statistical) moments that can be calculated on the (cleaned) images.
@@ -10,7 +12,9 @@ import com.google.common.base.MoreObjects;
  */
 public class Moments {
 
-    public Moments(long eventID, int telescopeID, int cameraID, int numberOfPixel, double width, double length, double delta, double skewness, double kurtosis, double phi, double miss, double r, double meanX, double meanY, double size) {
+    public Moments(long eventID, int telescopeID, int cameraID, int numberOfPixel, double width,
+                   double length, double delta, double skewness, double kurtosis, double phi,
+                   double miss, double r, double meanX, double meanY, double size) {
         this.eventID = eventID;
         this.telescopeID = telescopeID;
         this.cameraID = cameraID;
@@ -28,6 +32,25 @@ public class Moments {
         this.size = size;
     }
 
+    public HashMap<String, Object> toMap(){
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("eventID", eventID);
+        map.put("telescopeID", telescopeID);
+        map.put("cameraID", cameraID);
+        map.put("numberOfPixel", numberOfPixel);
+        map.put("width", width);
+        map.put("length", length);
+        map.put("delta", delta);
+        map.put("skewness", skewness);
+        map.put("kurtosis", kurtosis);
+        map.put("phi", phi);
+        map.put("miss", miss);
+        map.put("r", r);
+        map.put("meanX", meanX);
+        map.put("meanY", meanY);
+        map.put("size", size);
+        return map;
+    }
 
     public final long eventID;
     public final int telescopeID;
