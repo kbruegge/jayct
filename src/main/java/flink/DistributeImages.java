@@ -2,7 +2,10 @@ package flink;
 
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
@@ -12,6 +15,8 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import io.ImageReader;
@@ -82,6 +87,7 @@ public class DistributeImages implements Callable<Void>, Serializable {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         DataStreamSource<ImageReader.Event> source = env.addSource(new InfiniteEventSource(inputFile));
+        env.setParallelism(1);
 
         source
                 .setParallelism(sourceParallelism)
@@ -111,6 +117,12 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 .timeWindow(Time.seconds(windowSize))
                 .aggregate(new ReconstructionAggregatePython("reconstruct_direction"))
                 .setParallelism(windowParallelism)
+                .map(new MapFunction<Tuple2<HashMap<String,String>,Double>, Tuple2<Double, String>>() {
+                    @Override
+                    public Tuple2<Double, String> map(Tuple2<HashMap<String, String>, Double> value) throws Exception {
+                        return new Tuple2<>(value.f1, LocalDateTime.now().toString());
+                    }
+                })
                 .rescale()
                 .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
                 .setParallelism(sinkParallelism);
