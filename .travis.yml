@@ -4,5 +4,10 @@ jdk:
 - oraclejdk8
 
 before_install:
-- sudo apt-get update
-- sudo apt-get install python3
+- pip install pyro4
+- pip install git+https://github.com/cta-observatory/pyhessio
+- pip install git+https://github.com/cta-observatory/ctapipe-extra
+- pip install git+https://github.com/cta-observatory/ctapipe
+- pip install numpy
+- pip install astropy
+-
