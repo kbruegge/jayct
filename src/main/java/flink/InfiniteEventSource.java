@@ -25,7 +25,7 @@ public class InfiniteEventSource implements ParallelSourceFunction<ImageReader.E
     @Override
         public void run(SourceContext<ImageReader.Event> ctx) throws Exception {
             if (events == null){
-                events = ImageReader.fromPathString(inputFile).getListOfRandomEvents(500);
+                events = ImageReader.fromPathString(inputFile).getListOfRandomEvents(20000);
                 cycle = Iterables.cycle(events).iterator();
             }
             long i = 0;

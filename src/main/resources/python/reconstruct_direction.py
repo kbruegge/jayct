@@ -10,7 +10,6 @@ import astropy.units as units
 import warnings
 from astropy.utils.exceptions import AstropyDeprecationWarning
 
-import json
 import traceback
 
 import os
@@ -91,13 +90,14 @@ class Reconstructor():
             geom = self.instrument.subarray.tel[id].camera
             image = np.array(image)
             cleanmask = tailcuts_clean(geom, image, picture_thresh=10, boundary_thresh=5)
-            # clean = image.copy()
-            # clean[~cleanmask] = 0.0
             index = [i for i, x in enumerate(cleanmask) if x]
             return index, list(image[cleanmask])
         except:
             print("TAILCUT ERROR:")
             print(traceback.format_exc())
+            id = input["cameraId"]
+            geom = self.instrument.subarray.tel[id].camera
+            print(geom)
             result = list(np.zeros(1)), list(np.zeros(1))
             return result
 
