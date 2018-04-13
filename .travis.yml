@@ -4,12 +4,12 @@ jdk:
 - oraclejdk8
 
 python:
-  - "3.5"
+  - "3.6"
 
 before_install:
-- pip36 install pyro4
-- pip36 install git+https://github.com/cta-observatory/pyhessio
-- pip36 install git+https://github.com/cta-observatory/ctapipe-extra
-- pip36 install git+https://github.com/cta-observatory/ctapipe
-- pip36 install numpy
-- pip36 install astropy
+- pip3.6 install pyro4
+- pip3.6 install git+https://github.com/cta-observatory/pyhessio
+- pip3.6 install git+https://github.com/cta-observatory/ctapipe-extra
+- pip3.6 install git+https://github.com/cta-observatory/ctapipe
+- pip3.6 install numpy
+- pip3.6 install astropy
