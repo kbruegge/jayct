@@ -30,7 +30,7 @@ public class PythonBridge implements AutoCloseable {
     private static final PythonBridge instance = new PythonBridge(
             PythonBridge.class.getClassLoader().getResource("python/pyroserver.py").getPath());
     
-    private static boolean stopped = true;
+    private static boolean stopped;
 
     public static synchronized PythonBridge getInstance() {
         return instance;
@@ -53,6 +53,7 @@ public class PythonBridge implements AutoCloseable {
             throw new RuntimeException("Python file not readable");
         }
         this.pathToPythonScript = pathToPythonScript;
+        stopped = true;
     }
 
     public void start() {
