@@ -16,7 +16,7 @@ import ml.TreeEnsemblePredictorRichMap;
 import picocli.CommandLine;
 import reconstruction.HillasParametrizationPythonMap;
 import reconstruction.ReconstructionAggregatePython;
-import reconstruction.TailCutPythonFlatMap;
+import reconstruction.TailCutPythonMap;
 import reconstruction.containers.Moments;
 import reconstruction.containers.ShowerImage;
 
@@ -84,13 +84,13 @@ public class DistributeImages implements Callable<Void>, Serializable {
         source
 //                .setParallelism(sourceParallelism)
 //                .rescale()
-                .flatMap(new TailCutPythonFlatMap("tail_cut"))
                 .filter(new FilterFunction<Tuple2<ShowerImage, Integer>>() {
                     @Override
                     public boolean filter(Tuple2<ShowerImage, Integer> value) throws Exception {
                         return value.f0.signalPixels.size() > 8;
                     }
                 })
+                .map(new TailCutPythonMap("tail_cut"))
                 .map(new HillasParametrizationPythonMap("hillas"))
                 .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
                     @Override
