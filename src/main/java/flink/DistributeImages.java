@@ -80,13 +80,12 @@ public class DistributeImages implements Callable<Void>, Serializable {
     private StreamExecutionEnvironment flinkPlan() {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
 
         DataStreamSource<ImageReader.Event> source = env.addSource(new InfiniteEventSource(inputFile));
 
         source
-//                .setParallelism(sourceParallelism)
-//                .rescale()
+                .setParallelism(sourceParallelism)
+                .rescale()
                 .flatMap(new FlatMapFunction<ImageReader.Event, Tuple3<Long, Integer, double[]>>() {
                     @Override
                     public void flatMap(ImageReader.Event value, Collector<Tuple3<Long, Integer, double[]>> out) throws Exception {
@@ -111,10 +110,10 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 })
                 .timeWindow(Time.seconds(windowSize))
                 .aggregate(new ReconstructionAggregatePython("reconstruct_direction"))
-//                .setParallelism(windowParallelism)
-//                .rescale()
-                .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE);
-//                .setParallelism(sinkParallelism);
+                .setParallelism(windowParallelism)
+                .rescale()
+                .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
+                .setParallelism(sinkParallelism);
 
         return env;
     }
