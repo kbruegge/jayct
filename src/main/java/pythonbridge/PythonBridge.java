@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 /**
  * This object is the heart of the connection between python and java. The constructor takes the
@@ -27,13 +28,16 @@ public class PythonBridge implements AutoCloseable {
     private PyroProxy remoteObject;
     private String pathToPythonScript = "";
     
-    private static final PythonBridge instance = new PythonBridge(
-            PythonBridge.class.getClassLoader().getResource("python/pyroserver.py").getPath());
+    private static final PythonBridge instance = new PythonBridge();
     
     private static boolean stopped;
 
     public static synchronized PythonBridge getInstance() {
         return instance;
+    }
+
+    private PythonBridge() {
+        this("python/pyroserver.py");
     }
 
     /**
@@ -47,12 +51,18 @@ public class PythonBridge implements AutoCloseable {
      * @throws IOException in case an error occurs when starting the processes
      */
     private PythonBridge(String pathToPythonScript) {
-
-        if (!new File(pathToPythonScript).canRead()) {
-            log.error("File at " + pathToPythonScript + " is not readable.");
+        URL resource = PythonBridge.class.getClassLoader().getResource(pathToPythonScript);
+        if (resource != null) {
+            this.pathToPythonScript = resource.getPath();
+        } else {
+            System.out.println("Resource is empty. Wrong path?");
+            System.out.println("Stop the program.");
+            System.exit(-1);
+        }
+        if (!new File(this.pathToPythonScript).canRead()) {
+            log.error("File at " + this.pathToPythonScript + " is not readable.");
             throw new RuntimeException("Python file not readable");
         }
-        this.pathToPythonScript = pathToPythonScript;
         stopped = true;
     }
 
