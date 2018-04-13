@@ -56,7 +56,7 @@ public class PythonBridge implements AutoCloseable {
         stopped = true;
     }
 
-    public void start() {
+    public synchronized void start() {
         if (stopped) {
             stopped = false;
             String[] nameServerCommand = {"python", "-u", "-m", "Pyro4.naming"}; // -u for unbuffered python output
