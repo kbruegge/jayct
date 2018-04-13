@@ -35,7 +35,6 @@ public class ReconstructionAggregatePython implements AggregateFunction
             public void run() {
                 try {
                     bridge.close();
-                    System.out.println("Close the bridge.");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

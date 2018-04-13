@@ -21,6 +21,7 @@ import reconstruction.HillasParametrizationPythonMap;
 import reconstruction.ReconstructionAggregatePython;
 import reconstruction.TailCutPythonMap;
 import reconstruction.containers.Moments;
+import reconstruction.containers.ShowerImage;
 
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
@@ -79,13 +80,12 @@ public class DistributeImages implements Callable<Void>, Serializable {
     private StreamExecutionEnvironment flinkPlan() {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
 
         DataStreamSource<ImageReader.Event> source = env.addSource(new InfiniteEventSource(inputFile));
 
         source
-//                .setParallelism(sourceParallelism)
-//                .rescale()
+                .setParallelism(sourceParallelism)
+                .rescale()
                 .flatMap(new FlatMapFunction<ImageReader.Event, Tuple3<Long, Integer, double[]>>() {
                     @Override
                     public void flatMap(ImageReader.Event value, Collector<Tuple3<Long, Integer, double[]>> out) throws Exception {
@@ -96,13 +96,11 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
                 })
                 .map(new TailCutPythonMap("tail_cut"))
+                .filter((FilterFunction<Tuple2<ShowerImage, Integer>>) value
+                        -> value.f0.signalPixels.size() > 1)
                 .map(new HillasParametrizationPythonMap("hillas"))
-                .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
-                    @Override
-                    public boolean filter(Tuple2<Moments, Integer> value) throws Exception {
-                        return value.f0.numberOfPixel > 4;
-                    }
-                })
+                .filter((FilterFunction<Tuple2<Moments, Integer>>) value
+                        -> value.f0.numberOfPixel > 4)
                 .map(new TreeEnsemblePredictorRichMap(modelFile))
                 .keyBy(new KeySelector<Tuple2<Moments, Double>, Long>() {
                     @Override
@@ -112,10 +110,10 @@ public class DistributeImages implements Callable<Void>, Serializable {
                 })
                 .timeWindow(Time.seconds(windowSize))
                 .aggregate(new ReconstructionAggregatePython("reconstruct_direction"))
-//                .setParallelism(windowParallelism)
-//                .rescale()
-                .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE);
-//                .setParallelism(sinkParallelism);
+                .setParallelism(windowParallelism)
+                .rescale()
+                .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
+                .setParallelism(sinkParallelism);
 
         return env;
     }
