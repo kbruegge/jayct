@@ -58,6 +58,7 @@ public class PythonBridge implements AutoCloseable {
 
     public synchronized void start() {
         if (stopped) {
+            System.out.println("Start the bridge...");
             stopped = false;
             String[] nameServerCommand = {"python", "-u", "-m", "Pyro4.naming"}; // -u for unbuffered python output
             try {
@@ -117,13 +118,6 @@ public class PythonBridge implements AutoCloseable {
 
     }
 
-    private void stop() {
-        stopped = true;
-        remoteObject.close();
-        nameServerProcess.destroy();
-        pythonProcess.destroy();
-    }
-
     /**
      * Calls a Python method by name. This methods delegates to the {@link PyroProxy#call} method.
      * There is some more code in here which logs python output to the appropriate java log.
@@ -170,7 +164,10 @@ public class PythonBridge implements AutoCloseable {
     public void close() throws Exception {
         synchronized (this) {
             if (!stopped) {
-                stop();
+                stopped = true;
+                remoteObject.close();
+                nameServerProcess.destroy();
+                pythonProcess.destroy();
                 System.out.println("Stop the bridge.");
             }
         }
