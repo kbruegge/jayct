@@ -30,6 +30,7 @@ public class ReconstructionAggregatePython implements AggregateFunction
 
     private Object readResolve() {
         bridge = PythonBridge.getInstance();
+        bridge.start();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {

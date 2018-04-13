@@ -26,6 +26,7 @@ public class HillasParametrizationPythonMap extends RichMapFunction<Tuple2<Showe
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);
         bridge = PythonBridge.getInstance();
+        bridge.start();
     }
 
     @Override

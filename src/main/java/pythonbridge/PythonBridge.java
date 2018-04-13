@@ -24,9 +24,13 @@ public class PythonBridge implements AutoCloseable {
 
     private Process nameServerProcess = null;
     private Process pythonProcess = null;
-    private final PyroProxy remoteObject;
-
-    private static final PythonBridge instance = new PythonBridge(PythonBridge.class.getClassLoader().getResource("python/pyroserver.py").getPath());
+    private PyroProxy remoteObject;
+    private String pathToPythonScript = "";
+    
+    private static final PythonBridge instance = new PythonBridge(
+            PythonBridge.class.getClassLoader().getResource("python/pyroserver.py").getPath());
+    
+    private static boolean stopped = true;
 
     public static synchronized PythonBridge getInstance() {
         return instance;
@@ -43,70 +47,77 @@ public class PythonBridge implements AutoCloseable {
      * @throws IOException in case an error occurs when starting the processes
      */
     private PythonBridge(String pathToPythonScript) {
+
         if (!new File(pathToPythonScript).canRead()) {
             log.error("File at " + pathToPythonScript + " is not readable.");
             throw new RuntimeException("Python file not readable");
         }
-        try {
+        this.pathToPythonScript = pathToPythonScript;
+    }
+
+    public void start() {
+        if (stopped) {
+            stopped = false;
             String[] nameServerCommand = {"python", "-u", "-m", "Pyro4.naming"}; // -u for unbuffered python output
+            try {
 
-            nameServerProcess = new ProcessBuilder(nameServerCommand).start();
-            BufferedReader stdin = new BufferedReader(new InputStreamReader(nameServerProcess.getInputStream()));
-            BufferedReader stderr = new BufferedReader(new InputStreamReader(nameServerProcess.getErrorStream()));
-            boolean isNameServerRunning = false;
-            for (int i = 0; i < 50; i++) {
-                String output = stdin.readLine();
-                if (output != null && output.startsWith("NS running")) {
-                    log.debug("NameServer is running");
-                    isNameServerRunning = true;
-                    break;
+                nameServerProcess = new ProcessBuilder(nameServerCommand).start();
+                BufferedReader stdin = new BufferedReader(new InputStreamReader(nameServerProcess.getInputStream()));
+                BufferedReader stderr = new BufferedReader(new InputStreamReader(nameServerProcess.getErrorStream()));
+                boolean isNameServerRunning = false;
+                for (int i = 0; i < 50; i++) {
+                    String output = stdin.readLine();
+                    if (output != null && output.startsWith("NS running")) {
+                        log.debug("NameServer is running");
+                        isNameServerRunning = true;
+                        break;
+                    }
+                    Thread.sleep(200);
                 }
-                Thread.sleep(200);
-            }
-            if (!isNameServerRunning) {
-                stderr.lines().forEach(e -> log.error(e));
-                nameServerProcess.destroy();
-                throw new IOException("Timeout while waiting for start of NameServer.");
-            }
-
-
-            String[] command = {"python", "-u", pathToPythonScript}; // -u for unbuffered python output
-
-            pythonProcess = new ProcessBuilder(command).redirectErrorStream(true).start();
-            stdin = new BufferedReader(new InputStreamReader(pythonProcess.getInputStream()));
-            stderr = new BufferedReader(new InputStreamReader(pythonProcess.getErrorStream()));
-
-            boolean isPyroDaemonRunning = false;
-            for (int i = 0; i < 50; i++) {
-                String output = stdin.readLine();
-                if (output != null && output.startsWith("Pyro daemon running.")) {
-                    log.debug("Pyro daemon is running.");
-                    isPyroDaemonRunning = true;
-                    break;
+                if (!isNameServerRunning) {
+                    stderr.lines().forEach(e -> log.error(e));
+                    nameServerProcess.destroy();
+                    throw new IOException("Timeout while waiting for start of NameServer.");
                 }
-                Thread.sleep(200);
+
+
+                String[] command = {"python", "-u", this.pathToPythonScript}; // -u for unbuffered python output
+
+                pythonProcess = new ProcessBuilder(command).redirectErrorStream(true).start();
+                stdin = new BufferedReader(new InputStreamReader(pythonProcess.getInputStream()));
+                stderr = new BufferedReader(new InputStreamReader(pythonProcess.getErrorStream()));
+
+                boolean isPyroDaemonRunning = false;
+                for (int i = 0; i < 50; i++) {
+                    String output = stdin.readLine();
+                    if (output != null && output.startsWith("Pyro daemon running.")) {
+                        log.debug("Pyro daemon is running.");
+                        isPyroDaemonRunning = true;
+                        break;
+                    }
+                    Thread.sleep(200);
+                }
+                if (!isPyroDaemonRunning) {
+                    stderr.lines().forEach(e -> log.error(e));
+                    pythonProcess.destroy();
+                    throw new IOException("Timeout while waiting for start of PyroDaemon.");
+                }
+                NameServerProxy nsProxy = NameServerProxy.locateNS("localhost");
+
+                //TODO: use different NameServers (per File?) for higher parallelism
+                remoteObject = new PyroProxy(nsProxy.lookup("streams.processors"));
+            } catch (IOException | InterruptedException e) {
+                pythonProcess.destroyForcibly();
+                nameServerProcess.destroyForcibly();
+                e.printStackTrace();
+                throw new RuntimeException("An error occured while invoking the python processes");
             }
-            if (!isPyroDaemonRunning) {
-                stderr.lines().forEach(e -> log.error(e));
-                pythonProcess.destroy();
-                throw new IOException("Timeout while waiting for start of PyroDaemon.");
-            }
-
-
-            NameServerProxy nsProxy = NameServerProxy.locateNS("localhost");
-
-            //TODO: use different NameServers (per File?) for higher parallelism
-            remoteObject = new PyroProxy(nsProxy.lookup("streams.processors"));
-        } catch (IOException | InterruptedException e) {
-            pythonProcess.destroyForcibly();
-            nameServerProcess.destroyForcibly();
-            e.printStackTrace();
-            throw new RuntimeException("An error occured while invoking the python processes");
         }
 
     }
 
     private void stop() {
+        stopped = true;
         remoteObject.close();
         nameServerProcess.destroy();
         pythonProcess.destroy();

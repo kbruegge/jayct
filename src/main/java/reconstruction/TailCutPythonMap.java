@@ -29,6 +29,7 @@ public class TailCutPythonMap extends RichMapFunction<Tuple3<Long, Integer, doub
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);
         bridge = PythonBridge.getInstance();
+        bridge.start();
     }
 
     @Override
