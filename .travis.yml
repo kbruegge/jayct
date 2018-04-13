@@ -7,9 +7,9 @@ python:
   - "3.5"
 
 before_install:
-- pip3 install pyro4
-- pip3 install git+https://github.com/cta-observatory/pyhessio
-- pip3 install git+https://github.com/cta-observatory/ctapipe-extra
-- pip3 install git+https://github.com/cta-observatory/ctapipe
-- pip3 install numpy
-- pip3 install astropy
+- pip36 install pyro4
+- pip36 install git+https://github.com/cta-observatory/pyhessio
+- pip36 install git+https://github.com/cta-observatory/ctapipe-extra
+- pip36 install git+https://github.com/cta-observatory/ctapipe
+- pip36 install numpy
+- pip36 install astropy
