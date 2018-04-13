@@ -1,14 +1,13 @@
 import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+
 import pythonbridge.PythonBridge;
 import reconstruction.containers.Moments;
-import scala.collection.mutable.ImmutableMapAdaptor;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 public class PythonTest {
 
@@ -55,5 +54,27 @@ public class PythonTest {
                 o.get("size"));
 
         assert m.kurtosis == o.get("kurtosis");
+    }
+
+    @Test
+    public void testTailCut() throws Exception {
+        PythonBridge bridge = PythonBridge.getInstance();
+
+        Random r = new Random();
+        assert bridge != null;
+
+        double[] b = new double[1855];
+        for (int i = 0; i < b.length; i++) {
+            b[i] = r.nextDouble() * 50;
+        }
+        Object[] result = (Object[]) bridge.callMethod("tail_cut", ImmutableMap.of("image", b, "cameraId", 1, "eventId", 5));
+
+        // cast the results into array
+        @SuppressWarnings("unchecked")
+        ArrayList<Integer> index = (ArrayList<Integer>) result[0];
+        @SuppressWarnings("unchecked")
+        ArrayList<Double> weights = (ArrayList<Double>) result[1];
+
+        bridge.close();
     }
 }
