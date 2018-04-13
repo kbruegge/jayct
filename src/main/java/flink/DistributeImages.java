@@ -21,6 +21,7 @@ import reconstruction.HillasParametrizationPythonMap;
 import reconstruction.ReconstructionAggregatePython;
 import reconstruction.TailCutPythonMap;
 import reconstruction.containers.Moments;
+import reconstruction.containers.ShowerImage;
 
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
@@ -96,13 +97,11 @@ public class DistributeImages implements Callable<Void>, Serializable {
                     }
                 })
                 .map(new TailCutPythonMap("tail_cut"))
+                .filter((FilterFunction<Tuple2<ShowerImage, Integer>>) value
+                        -> value.f0.signalPixels.size() > 1)
                 .map(new HillasParametrizationPythonMap("hillas"))
-                .filter(new FilterFunction<Tuple2<Moments, Integer>>() {
-                    @Override
-                    public boolean filter(Tuple2<Moments, Integer> value) throws Exception {
-                        return value.f0.numberOfPixel > 4;
-                    }
-                })
+                .filter((FilterFunction<Tuple2<Moments, Integer>>) value
+                        -> value.f0.numberOfPixel > 4)
                 .map(new TreeEnsemblePredictorRichMap(modelFile))
                 .keyBy(new KeySelector<Tuple2<Moments, Double>, Long>() {
                     @Override
