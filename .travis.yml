@@ -1,15 +1,19 @@
-language: java
+language: python
+ python:
+   - "3.6"
 
-jdk:
-- oraclejdk8
+addons:
+  apt:
+    packages:
+      - oracle-java8-set-default
+      - maven3
 
-python:
-  - "3.6"
+script: mvn test
 
 before_install:
-- pip3.6 install pyro4
-- pip3.6 install git+https://github.com/cta-observatory/pyhessio
-- pip3.6 install git+https://github.com/cta-observatory/ctapipe-extra
-- pip3.6 install git+https://github.com/cta-observatory/ctapipe
-- pip3.6 install numpy
-- pip3.6 install astropy
+- pip install pyro4
+- pip install git+https://github.com/cta-observatory/pyhessio
+- pip install git+https://github.com/cta-observatory/ctapipe-extra
+- pip install git+https://github.com/cta-observatory/ctapipe
+- pip install numpy
+- pip install astropy
