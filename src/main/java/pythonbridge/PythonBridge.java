@@ -169,7 +169,10 @@ public class PythonBridge implements AutoCloseable {
     @Override
     public void close() throws Exception {
         synchronized (this) {
-            stop();
+            if (!stopped) {
+                stop();
+                System.out.println("Stop the bridge.");
+            }
         }
     }
 }
