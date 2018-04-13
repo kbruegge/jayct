@@ -79,12 +79,24 @@ class Reconstructor():
     def ping(self, something):
         return something
 
-    def tail_cut(self, image, id):
+    def tail_cut(self, input):
         # Apply image cleaning
-        cleanmask = tailcuts_clean(geom, image, picture_thresh=10, boundary_thresh=5)
-        clean = image.copy()
-        clean[~cleanmask] = 0.0
-
+        try:
+            image = input["image"]
+            id = input["cameraId"]
+            geom = self.instrument.subarray.tel[id].camera
+            image = np.array(image)
+            cleanmask = tailcuts_clean(geom, image, picture_thresh=10, boundary_thresh=5)
+            # clean = image.copy()
+            # clean[~cleanmask] = 0.0
+            index = [i for i, x in enumerate(cleanmask) if x]
+            return index, list(image[cleanmask])
+        except:
+            print("TAILCUT ERROR:")
+            print(traceback.format_exc())
+            result = list(np.zeros(1)), list(np.zeros(1))
+            print(result)
+            return result
 
     def hillas(self, input):
         # Calculate image parameters
