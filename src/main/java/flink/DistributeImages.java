@@ -1,12 +1,15 @@
 package flink;
 
 import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.util.Collector;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;
@@ -18,7 +21,6 @@ import reconstruction.HillasParametrizationPythonMap;
 import reconstruction.ReconstructionAggregatePython;
 import reconstruction.TailCutPythonMap;
 import reconstruction.containers.Moments;
-import reconstruction.containers.ShowerImage;
 
 /**
  * /home/kbruegge/jayct/src/main/resources/images.json.gz /home/kbruegge/jayct/src/main/resources/classifier.json
@@ -84,10 +86,13 @@ public class DistributeImages implements Callable<Void>, Serializable {
         source
 //                .setParallelism(sourceParallelism)
 //                .rescale()
-                .filter(new FilterFunction<Tuple2<ShowerImage, Integer>>() {
+                .flatMap(new FlatMapFunction<ImageReader.Event, Tuple3<Long, Integer, double[]>>() {
                     @Override
-                    public boolean filter(Tuple2<ShowerImage, Integer> value) throws Exception {
-                        return value.f0.signalPixels.size() > 8;
+                    public void flatMap(ImageReader.Event value, Collector<Tuple3<Long, Integer, double[]>> out) throws Exception {
+                        value.images
+                                .entrySet()
+                                .forEach(entry ->
+                                        out.collect(new Tuple3<>(value.eventId, entry.getKey(), entry.getValue())));
                     }
                 })
                 .map(new TailCutPythonMap("tail_cut"))
