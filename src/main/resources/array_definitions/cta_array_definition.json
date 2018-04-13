@@ -1,810 +1,1748 @@
 [
   {
-    "telescope_type": "LST",
-    "telescope_position_z": 16.0,
-    "camera_name": "LSTCam",
     "optical_focal_length": 28.0,
-    "telescope_position_y": 58.117000579833984,
-    "telescope_position_x": -37.58100128173828
+    "camera_name": "LSTCam",
+    "telescope_id": 1,
+    "telescope_type": "LST",
+    "telescope_position_x": -86.06599426269531,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 16.0
   },
   {
-    "telescope_type": "LST",
-    "telescope_position_z": 16.0,
-    "camera_name": "LSTCam",
     "optical_focal_length": 28.0,
-    "telescope_position_y": -58.117000579833984,
-    "telescope_position_x": -37.58100128173828
+    "camera_name": "LSTCam",
+    "telescope_id": 2,
+    "telescope_type": "LST",
+    "telescope_position_x": -0.0,
+    "telescope_position_y": 76.84500122070312,
+    "telescope_position_z": 16.0
   },
   {
-    "telescope_type": "LST",
-    "telescope_position_z": 16.0,
-    "camera_name": "LSTCam",
     "optical_focal_length": 28.0,
+    "camera_name": "LSTCam",
+    "telescope_id": 3,
+    "telescope_type": "LST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -76.84500122070312,
+    "telescope_position_z": 16.0
+  },
+  {
+    "optical_focal_length": 28.0,
+    "camera_name": "LSTCam",
+    "telescope_id": 4,
+    "telescope_type": "LST",
+    "telescope_position_x": 86.06599426269531,
     "telescope_position_y": 0.0,
-    "telescope_position_x": 75.16100311279297
+    "telescope_position_z": 16.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 5,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 6,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
     "telescope_position_y": -151.1999969482422,
-    "telescope_position_x": 0.0
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 7,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
     "telescope_position_y": 151.1999969482422,
-    "telescope_position_x": 0.0
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 8,
+    "telescope_type": "MST",
+    "telescope_position_x": -146.65599060058594,
     "telescope_position_y": -75.5999984741211,
-    "telescope_position_x": -146.65599060058594
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 9,
+    "telescope_type": "MST",
+    "telescope_position_x": -146.65599060058594,
     "telescope_position_y": 75.5999984741211,
-    "telescope_position_x": -146.65599060058594
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 10,
+    "telescope_type": "MST",
+    "telescope_position_x": 146.65599060058594,
     "telescope_position_y": -75.5999984741211,
-    "telescope_position_x": 146.65599060058594
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 11,
+    "telescope_type": "MST",
+    "telescope_position_x": 146.65599060058594,
     "telescope_position_y": 75.5999984741211,
-    "telescope_position_x": 146.65599060058594
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 12,
+    "telescope_type": "MST",
+    "telescope_position_x": -308.4100036621094,
     "telescope_position_y": -0.0,
-    "telescope_position_x": -308.4100036621094
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 13,
+    "telescope_type": "MST",
+    "telescope_position_x": 308.4100036621094,
     "telescope_position_y": 0.0,
-    "telescope_position_x": 308.4100036621094
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 14,
+    "telescope_type": "MST",
+    "telescope_position_x": -154.2050018310547,
     "telescope_position_y": -238.4739990234375,
-    "telescope_position_x": -154.2050018310547
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 15,
+    "telescope_type": "MST",
+    "telescope_position_x": -154.2050018310547,
     "telescope_position_y": 238.4739990234375,
-    "telescope_position_x": -154.2050018310547
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 16,
+    "telescope_type": "MST",
+    "telescope_position_x": 154.2050018310547,
     "telescope_position_y": -238.4739990234375,
-    "telescope_position_x": 154.2050018310547
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 17,
+    "telescope_type": "MST",
+    "telescope_position_x": 154.2050018310547,
     "telescope_position_y": 238.4739990234375,
-    "telescope_position_x": 154.2050018310547
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 18,
+    "telescope_type": "MST",
+    "telescope_position_x": -582.1699829101562,
     "telescope_position_y": -0.0,
-    "telescope_position_x": -582.1699829101562
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 19,
+    "telescope_type": "MST",
+    "telescope_position_x": 582.1699829101562,
     "telescope_position_y": 0.0,
-    "telescope_position_x": 582.1699829101562
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 20,
+    "telescope_type": "MST",
+    "telescope_position_x": -291.0849914550781,
     "telescope_position_y": 450.1549987792969,
-    "telescope_position_x": -291.0849914550781
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 21,
+    "telescope_type": "MST",
+    "telescope_position_x": -291.0849914550781,
     "telescope_position_y": -450.1549987792969,
-    "telescope_position_x": -291.0849914550781
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 22,
+    "telescope_type": "MST",
+    "telescope_position_x": 291.0849914550781,
     "telescope_position_y": -450.1549987792969,
-    "telescope_position_x": 291.0849914550781
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 23,
+    "telescope_type": "MST",
+    "telescope_position_x": 291.0849914550781,
     "telescope_position_y": 450.1549987792969,
-    "telescope_position_x": 291.0849914550781
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 24,
+    "telescope_type": "MST",
+    "telescope_position_x": -315.468017578125,
     "telescope_position_y": -162.62100219726562,
-    "telescope_position_x": -315.468017578125
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 25,
+    "telescope_type": "MST",
+    "telescope_position_x": -315.468017578125,
     "telescope_position_y": 162.62100219726562,
-    "telescope_position_x": -315.468017578125
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 26,
+    "telescope_type": "MST",
+    "telescope_position_x": 315.468017578125,
     "telescope_position_y": -162.62100219726562,
-    "telescope_position_x": 315.468017578125
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 27,
+    "telescope_type": "MST",
+    "telescope_position_x": 315.468017578125,
     "telescope_position_y": 162.62100219726562,
-    "telescope_position_x": 315.468017578125
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 28,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
     "telescope_position_y": -325.24200439453125,
-    "telescope_position_x": 0.0
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "MST",
-    "telescope_position_z": 10.0,
-    "camera_name": "NectarCam",
     "optical_focal_length": 16.0,
+    "camera_name": "NectarCam",
+    "telescope_id": 29,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
     "telescope_position_y": 325.24200439453125,
-    "telescope_position_x": 0.0
+    "telescope_position_z": 10.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 178.14599609375,
-    "telescope_position_x": -691.1710205078125
+    "camera_name": "CHEC",
+    "telescope_id": 30,
+    "telescope_type": "SST",
+    "telescope_position_x": 95.25599670410156,
+    "telescope_position_y": 147.3109893798828,
+    "telescope_position_z": 5.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -178.14599609375,
-    "telescope_position_x": -691.1710205078125
+    "camera_name": "CHEC",
+    "telescope_id": 31,
+    "telescope_type": "SST",
+    "telescope_position_x": 248.64300537109375,
+    "telescope_position_y": -80.802001953125,
+    "telescope_position_z": 5.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 178.14599609375,
-    "telescope_position_x": 691.1710205078125
+    "camera_name": "CHEC",
+    "telescope_id": 32,
+    "telescope_type": "SST",
+    "telescope_position_x": -249.97698974609375,
+    "telescope_position_y": 231.12400817871094,
+    "telescope_position_z": 5.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -178.14599609375,
-    "telescope_position_x": 691.1710205078125
+    "camera_name": "CHEC",
+    "telescope_id": 33,
+    "telescope_type": "SST",
+    "telescope_position_x": -209.72999572753906,
+    "telescope_position_y": -157.12899780273438,
+    "telescope_position_z": 5.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 34,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
     "telescope_position_y": -723.5270385742188,
-    "telescope_position_x": 0.0
+    "telescope_position_z": 5.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 35,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
     "telescope_position_y": 723.5270385742188,
-    "telescope_position_x": 0.0
+    "telescope_position_z": 5.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -84.96499633789062,
-    "telescope_position_x": -494.468994140625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 84.96499633789062,
-    "telescope_position_x": -494.468994140625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -84.96499633789062,
-    "telescope_position_x": 494.468994140625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 84.96499633789062,
-    "telescope_position_x": 494.468994140625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 424.823974609375,
-    "telescope_position_x": -164.82301330566406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -424.823974609375,
-    "telescope_position_x": -164.82301330566406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -424.823974609375,
-    "telescope_position_x": 164.82301330566406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 424.823974609375,
-    "telescope_position_x": 164.82301330566406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -519.7949829101562,
-    "telescope_position_x": 0.0
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 519.7949829101562,
-    "telescope_position_x": 0.0
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -259.8970031738281,
-    "telescope_position_x": 504.1739807128906
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 259.8970031738281,
-    "telescope_position_x": 504.1739807128906
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 569.2160034179688,
-    "telescope_position_x": -662.532958984375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -569.2160034179688,
-    "telescope_position_x": -662.532958984375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 569.2160034179688,
-    "telescope_position_x": 662.532958984375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -569.2160034179688,
-    "telescope_position_x": 662.532958984375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -796.9029541015625,
-    "telescope_position_x": -220.84400939941406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 796.9029541015625,
-    "telescope_position_x": -220.84400939941406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 796.9029541015625,
-    "telescope_position_x": 220.84400939941406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -796.9029541015625,
-    "telescope_position_x": 220.84400939941406
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -227.68699645996094,
-    "telescope_position_x": -883.3770141601562
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 227.68699645996094,
-    "telescope_position_x": -883.3770141601562
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -227.68699645996094,
-    "telescope_position_x": 883.3770141601562
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 227.68699645996094,
-    "telescope_position_x": 883.3770141601562
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -944.301025390625,
-    "telescope_position_x": 0.0
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 944.301025390625,
-    "telescope_position_x": 0.0
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 472.1510009765625,
-    "telescope_position_x": -915.9229736328125
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -472.1510009765625,
-    "telescope_position_x": -915.9229736328125
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -472.1510009765625,
-    "telescope_position_x": 915.9229736328125
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 472.1510009765625,
-    "telescope_position_x": 915.9229736328125
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -121.40099334716797,
-    "telescope_position_x": -1177.530029296875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 121.40099334716797,
-    "telescope_position_x": -1177.530029296875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -121.40099334716797,
-    "telescope_position_x": 1177.530029296875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 121.40099334716797,
-    "telescope_position_x": 1177.530029296875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -971.2100219726562,
-    "telescope_position_x": -471.0119934082031
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 971.2100219726562,
-    "telescope_position_x": -471.0119934082031
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -971.2100219726562,
-    "telescope_position_x": 471.0119934082031
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 971.2100219726562,
-    "telescope_position_x": 471.0119934082031
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 849.8089599609375,
-    "telescope_position_x": -706.5179443359375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -849.8089599609375,
-    "telescope_position_x": -706.5179443359375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -849.8089599609375,
-    "telescope_position_x": 706.5179443359375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 849.8089599609375,
-    "telescope_position_x": 706.5179443359375
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 369.9119873046875,
-    "telescope_position_x": -1195.9840087890625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -369.9119873046875,
-    "telescope_position_x": -1195.9840087890625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -369.9119873046875,
-    "telescope_position_x": 1195.9840087890625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 369.9119873046875,
-    "telescope_position_x": 1195.9840087890625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 1109.7349853515625,
-    "telescope_position_x": -239.19699096679688
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -1109.7349853515625,
-    "telescope_position_x": -239.19699096679688
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -1109.7349853515625,
-    "telescope_position_x": 239.19699096679688
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 1109.7349853515625,
-    "telescope_position_x": 239.19699096679688
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 739.822998046875,
-    "telescope_position_x": -956.7870483398438
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -739.822998046875,
-    "telescope_position_x": -956.7870483398438
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -739.822998046875,
-    "telescope_position_x": 956.7870483398438
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 5.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 739.822998046875,
-    "telescope_position_x": 956.7870483398438
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -403.7389831542969,
-    "telescope_position_x": -391.60601806640625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 403.7389831542969,
-    "telescope_position_x": -391.60601806640625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 403.7389831542969,
-    "telescope_position_x": 391.60601806640625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -403.7389831542969,
-    "telescope_position_x": 391.60601806640625
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 318.6109924316406,
-    "telescope_position_x": -618.072998046875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -318.6109924316406,
-    "telescope_position_x": -618.072998046875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -318.6109924316406,
-    "telescope_position_x": 618.072998046875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 318.6109924316406,
-    "telescope_position_x": 618.072998046875
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -673.18603515625,
-    "telescope_position_x": -435.3039855957031
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 673.18603515625,
-    "telescope_position_x": -435.3039855957031
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": 673.18603515625,
-    "telescope_position_x": 435.3039855957031
-  },
-  {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
-    "telescope_position_y": -673.18603515625,
-    "telescope_position_x": 435.3039855957031
-  },
-  {
+    "camera_name": "CHEC",
+    "telescope_id": 36,
     "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
-    "optical_focal_length": 2.2829999923706055,
+    "telescope_position_x": -1091.8890380859375,
     "telescope_position_y": -0.0,
-    "telescope_position_x": -870.6070556640625
+    "telescope_position_z": 5.0
   },
   {
-    "telescope_type": "SST",
-    "telescope_position_z": 10.0,
-    "camera_name": "GATE",
     "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 37,
+    "telescope_type": "SST",
+    "telescope_position_x": 1091.8890380859375,
     "telescope_position_y": 0.0,
-    "telescope_position_x": 870.6070556640625
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 38,
+    "telescope_type": "SST",
+    "telescope_position_x": -494.468994140625,
+    "telescope_position_y": -84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 39,
+    "telescope_type": "SST",
+    "telescope_position_x": -494.468994140625,
+    "telescope_position_y": 84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 40,
+    "telescope_type": "SST",
+    "telescope_position_x": 494.468994140625,
+    "telescope_position_y": -84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 41,
+    "telescope_type": "SST",
+    "telescope_position_x": 494.468994140625,
+    "telescope_position_y": 84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 42,
+    "telescope_type": "SST",
+    "telescope_position_x": -164.82301330566406,
+    "telescope_position_y": 424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 43,
+    "telescope_type": "SST",
+    "telescope_position_x": -164.82301330566406,
+    "telescope_position_y": -424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 44,
+    "telescope_type": "SST",
+    "telescope_position_x": 164.82301330566406,
+    "telescope_position_y": -424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 45,
+    "telescope_type": "SST",
+    "telescope_position_x": 164.82301330566406,
+    "telescope_position_y": 424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 46,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -519.7949829101562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 47,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": 519.7949829101562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 48,
+    "telescope_type": "SST",
+    "telescope_position_x": -662.532958984375,
+    "telescope_position_y": 569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 49,
+    "telescope_type": "SST",
+    "telescope_position_x": -662.532958984375,
+    "telescope_position_y": -569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 50,
+    "telescope_type": "SST",
+    "telescope_position_x": 662.532958984375,
+    "telescope_position_y": 569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 51,
+    "telescope_type": "SST",
+    "telescope_position_x": 662.532958984375,
+    "telescope_position_y": -569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 52,
+    "telescope_type": "SST",
+    "telescope_position_x": -220.84400939941406,
+    "telescope_position_y": -796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 53,
+    "telescope_type": "SST",
+    "telescope_position_x": -220.84400939941406,
+    "telescope_position_y": 796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 54,
+    "telescope_type": "SST",
+    "telescope_position_x": 220.84400939941406,
+    "telescope_position_y": 796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 55,
+    "telescope_type": "SST",
+    "telescope_position_x": 220.84400939941406,
+    "telescope_position_y": -796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 56,
+    "telescope_type": "SST",
+    "telescope_position_x": -883.3770141601562,
+    "telescope_position_y": -227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 57,
+    "telescope_type": "SST",
+    "telescope_position_x": -883.3770141601562,
+    "telescope_position_y": 227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 58,
+    "telescope_type": "SST",
+    "telescope_position_x": 883.3770141601562,
+    "telescope_position_y": -227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 59,
+    "telescope_type": "SST",
+    "telescope_position_x": 883.3770141601562,
+    "telescope_position_y": 227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 60,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -944.301025390625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 61,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": 944.301025390625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 62,
+    "telescope_type": "SST",
+    "telescope_position_x": -915.9229736328125,
+    "telescope_position_y": 472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 63,
+    "telescope_type": "SST",
+    "telescope_position_x": -915.9229736328125,
+    "telescope_position_y": -472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 64,
+    "telescope_type": "SST",
+    "telescope_position_x": 915.9229736328125,
+    "telescope_position_y": -472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 65,
+    "telescope_type": "SST",
+    "telescope_position_x": 915.9229736328125,
+    "telescope_position_y": 472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 66,
+    "telescope_type": "SST",
+    "telescope_position_x": -471.0119934082031,
+    "telescope_position_y": -971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 67,
+    "telescope_type": "SST",
+    "telescope_position_x": -471.0119934082031,
+    "telescope_position_y": 971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 68,
+    "telescope_type": "SST",
+    "telescope_position_x": 471.0119934082031,
+    "telescope_position_y": -971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 69,
+    "telescope_type": "SST",
+    "telescope_position_x": 471.0119934082031,
+    "telescope_position_y": 971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 70,
+    "telescope_type": "SST",
+    "telescope_position_x": -706.5179443359375,
+    "telescope_position_y": 849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 71,
+    "telescope_type": "SST",
+    "telescope_position_x": -706.5179443359375,
+    "telescope_position_y": -849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 72,
+    "telescope_type": "SST",
+    "telescope_position_x": 706.5179443359375,
+    "telescope_position_y": -849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 73,
+    "telescope_type": "SST",
+    "telescope_position_x": 706.5179443359375,
+    "telescope_position_y": 849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 74,
+    "telescope_type": "SST",
+    "telescope_position_x": -1195.9840087890625,
+    "telescope_position_y": 369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 75,
+    "telescope_type": "SST",
+    "telescope_position_x": -1195.9840087890625,
+    "telescope_position_y": -369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 76,
+    "telescope_type": "SST",
+    "telescope_position_x": 1195.9840087890625,
+    "telescope_position_y": -369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 77,
+    "telescope_type": "SST",
+    "telescope_position_x": 1195.9840087890625,
+    "telescope_position_y": 369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 78,
+    "telescope_type": "SST",
+    "telescope_position_x": -239.19699096679688,
+    "telescope_position_y": 1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 79,
+    "telescope_type": "SST",
+    "telescope_position_x": -239.19699096679688,
+    "telescope_position_y": -1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 80,
+    "telescope_type": "SST",
+    "telescope_position_x": 239.19699096679688,
+    "telescope_position_y": -1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 81,
+    "telescope_type": "SST",
+    "telescope_position_x": 239.19699096679688,
+    "telescope_position_y": 1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 82,
+    "telescope_type": "SST",
+    "telescope_position_x": -956.7870483398438,
+    "telescope_position_y": 739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 83,
+    "telescope_type": "SST",
+    "telescope_position_x": -956.7870483398438,
+    "telescope_position_y": -739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 84,
+    "telescope_type": "SST",
+    "telescope_position_x": 956.7870483398438,
+    "telescope_position_y": -739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 85,
+    "telescope_type": "SST",
+    "telescope_position_x": 956.7870483398438,
+    "telescope_position_y": 739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 86,
+    "telescope_type": "SST",
+    "telescope_position_x": -391.60601806640625,
+    "telescope_position_y": -403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 87,
+    "telescope_type": "SST",
+    "telescope_position_x": -391.60601806640625,
+    "telescope_position_y": 403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 88,
+    "telescope_type": "SST",
+    "telescope_position_x": 391.60601806640625,
+    "telescope_position_y": 403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 89,
+    "telescope_type": "SST",
+    "telescope_position_x": 391.60601806640625,
+    "telescope_position_y": -403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 90,
+    "telescope_type": "SST",
+    "telescope_position_x": -618.072998046875,
+    "telescope_position_y": 318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 91,
+    "telescope_type": "SST",
+    "telescope_position_x": -618.072998046875,
+    "telescope_position_y": -318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 92,
+    "telescope_type": "SST",
+    "telescope_position_x": 618.072998046875,
+    "telescope_position_y": -318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 93,
+    "telescope_type": "SST",
+    "telescope_position_x": 618.072998046875,
+    "telescope_position_y": 318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 94,
+    "telescope_type": "SST",
+    "telescope_position_x": -435.3039855957031,
+    "telescope_position_y": -673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 95,
+    "telescope_type": "SST",
+    "telescope_position_x": -435.3039855957031,
+    "telescope_position_y": 673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 96,
+    "telescope_type": "SST",
+    "telescope_position_x": 435.3039855957031,
+    "telescope_position_y": 673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 97,
+    "telescope_type": "SST",
+    "telescope_position_x": 435.3039855957031,
+    "telescope_position_y": -673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 98,
+    "telescope_type": "SST",
+    "telescope_position_x": -870.6070556640625,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 2.2829999923706055,
+    "camera_name": "CHEC",
+    "telescope_id": 99,
+    "telescope_type": "SST",
+    "telescope_position_x": 870.6070556640625,
+    "telescope_position_y": 0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 100,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 101,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -151.1999969482422,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 102,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": 151.1999969482422,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 103,
+    "telescope_type": "MST",
+    "telescope_position_x": -146.65599060058594,
+    "telescope_position_y": -75.5999984741211,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 104,
+    "telescope_type": "MST",
+    "telescope_position_x": -146.65599060058594,
+    "telescope_position_y": 75.5999984741211,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 105,
+    "telescope_type": "MST",
+    "telescope_position_x": 146.65599060058594,
+    "telescope_position_y": -75.5999984741211,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 106,
+    "telescope_type": "MST",
+    "telescope_position_x": 146.65599060058594,
+    "telescope_position_y": 75.5999984741211,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 107,
+    "telescope_type": "MST",
+    "telescope_position_x": -308.4100036621094,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 108,
+    "telescope_type": "MST",
+    "telescope_position_x": 308.4100036621094,
+    "telescope_position_y": 0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 109,
+    "telescope_type": "MST",
+    "telescope_position_x": -154.2050018310547,
+    "telescope_position_y": -238.4739990234375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 110,
+    "telescope_type": "MST",
+    "telescope_position_x": -154.2050018310547,
+    "telescope_position_y": 238.4739990234375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 111,
+    "telescope_type": "MST",
+    "telescope_position_x": 154.2050018310547,
+    "telescope_position_y": -238.4739990234375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 112,
+    "telescope_type": "MST",
+    "telescope_position_x": 154.2050018310547,
+    "telescope_position_y": 238.4739990234375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 113,
+    "telescope_type": "MST",
+    "telescope_position_x": -582.1699829101562,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 114,
+    "telescope_type": "MST",
+    "telescope_position_x": 582.1699829101562,
+    "telescope_position_y": 0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 115,
+    "telescope_type": "MST",
+    "telescope_position_x": -291.0849914550781,
+    "telescope_position_y": 450.1549987792969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 116,
+    "telescope_type": "MST",
+    "telescope_position_x": -291.0849914550781,
+    "telescope_position_y": -450.1549987792969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 117,
+    "telescope_type": "MST",
+    "telescope_position_x": 291.0849914550781,
+    "telescope_position_y": -450.1549987792969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 118,
+    "telescope_type": "MST",
+    "telescope_position_x": 291.0849914550781,
+    "telescope_position_y": 450.1549987792969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 119,
+    "telescope_type": "MST",
+    "telescope_position_x": -315.468017578125,
+    "telescope_position_y": -162.62100219726562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 120,
+    "telescope_type": "MST",
+    "telescope_position_x": -315.468017578125,
+    "telescope_position_y": 162.62100219726562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 121,
+    "telescope_type": "MST",
+    "telescope_position_x": 315.468017578125,
+    "telescope_position_y": -162.62100219726562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 122,
+    "telescope_type": "MST",
+    "telescope_position_x": 315.468017578125,
+    "telescope_position_y": 162.62100219726562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 123,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -325.24200439453125,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 16.0,
+    "camera_name": "FlashCam",
+    "telescope_id": 124,
+    "telescope_type": "MST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": 325.24200439453125,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 125,
+    "telescope_type": "SST",
+    "telescope_position_x": 95.25599670410156,
+    "telescope_position_y": 147.3109893798828,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 126,
+    "telescope_type": "SST",
+    "telescope_position_x": 248.64300537109375,
+    "telescope_position_y": -80.802001953125,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 127,
+    "telescope_type": "SST",
+    "telescope_position_x": -249.97698974609375,
+    "telescope_position_y": 231.12400817871094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 128,
+    "telescope_type": "SST",
+    "telescope_position_x": -209.72999572753906,
+    "telescope_position_y": -157.12899780273438,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 129,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -723.5270385742188,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 130,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": 723.5270385742188,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 131,
+    "telescope_type": "SST",
+    "telescope_position_x": -1091.8890380859375,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 132,
+    "telescope_type": "SST",
+    "telescope_position_x": 1091.8890380859375,
+    "telescope_position_y": 0.0,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 133,
+    "telescope_type": "SST",
+    "telescope_position_x": -494.468994140625,
+    "telescope_position_y": -84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 134,
+    "telescope_type": "SST",
+    "telescope_position_x": -494.468994140625,
+    "telescope_position_y": 84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 135,
+    "telescope_type": "SST",
+    "telescope_position_x": 494.468994140625,
+    "telescope_position_y": -84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 136,
+    "telescope_type": "SST",
+    "telescope_position_x": 494.468994140625,
+    "telescope_position_y": 84.96499633789062,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 137,
+    "telescope_type": "SST",
+    "telescope_position_x": -164.82301330566406,
+    "telescope_position_y": 424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 138,
+    "telescope_type": "SST",
+    "telescope_position_x": -164.82301330566406,
+    "telescope_position_y": -424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 139,
+    "telescope_type": "SST",
+    "telescope_position_x": 164.82301330566406,
+    "telescope_position_y": -424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 140,
+    "telescope_type": "SST",
+    "telescope_position_x": 164.82301330566406,
+    "telescope_position_y": 424.823974609375,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 141,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -519.7949829101562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 142,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": 519.7949829101562,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 143,
+    "telescope_type": "SST",
+    "telescope_position_x": -662.532958984375,
+    "telescope_position_y": 569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 144,
+    "telescope_type": "SST",
+    "telescope_position_x": -662.532958984375,
+    "telescope_position_y": -569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 145,
+    "telescope_type": "SST",
+    "telescope_position_x": 662.532958984375,
+    "telescope_position_y": 569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 146,
+    "telescope_type": "SST",
+    "telescope_position_x": 662.532958984375,
+    "telescope_position_y": -569.2160034179688,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 147,
+    "telescope_type": "SST",
+    "telescope_position_x": -220.84400939941406,
+    "telescope_position_y": -796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 148,
+    "telescope_type": "SST",
+    "telescope_position_x": -220.84400939941406,
+    "telescope_position_y": 796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 149,
+    "telescope_type": "SST",
+    "telescope_position_x": 220.84400939941406,
+    "telescope_position_y": 796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 150,
+    "telescope_type": "SST",
+    "telescope_position_x": 220.84400939941406,
+    "telescope_position_y": -796.9029541015625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 151,
+    "telescope_type": "SST",
+    "telescope_position_x": -883.3770141601562,
+    "telescope_position_y": -227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 152,
+    "telescope_type": "SST",
+    "telescope_position_x": -883.3770141601562,
+    "telescope_position_y": 227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 153,
+    "telescope_type": "SST",
+    "telescope_position_x": 883.3770141601562,
+    "telescope_position_y": -227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 154,
+    "telescope_type": "SST",
+    "telescope_position_x": 883.3770141601562,
+    "telescope_position_y": 227.68699645996094,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 155,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": -944.301025390625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 156,
+    "telescope_type": "SST",
+    "telescope_position_x": 0.0,
+    "telescope_position_y": 944.301025390625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 157,
+    "telescope_type": "SST",
+    "telescope_position_x": -915.9229736328125,
+    "telescope_position_y": 472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 158,
+    "telescope_type": "SST",
+    "telescope_position_x": -915.9229736328125,
+    "telescope_position_y": -472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 159,
+    "telescope_type": "SST",
+    "telescope_position_x": 915.9229736328125,
+    "telescope_position_y": -472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 160,
+    "telescope_type": "SST",
+    "telescope_position_x": 915.9229736328125,
+    "telescope_position_y": 472.1510009765625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 161,
+    "telescope_type": "SST",
+    "telescope_position_x": -471.0119934082031,
+    "telescope_position_y": -971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 162,
+    "telescope_type": "SST",
+    "telescope_position_x": -471.0119934082031,
+    "telescope_position_y": 971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 163,
+    "telescope_type": "SST",
+    "telescope_position_x": 471.0119934082031,
+    "telescope_position_y": -971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 164,
+    "telescope_type": "SST",
+    "telescope_position_x": 471.0119934082031,
+    "telescope_position_y": 971.2100219726562,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 165,
+    "telescope_type": "SST",
+    "telescope_position_x": -706.5179443359375,
+    "telescope_position_y": 849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 166,
+    "telescope_type": "SST",
+    "telescope_position_x": -706.5179443359375,
+    "telescope_position_y": -849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 167,
+    "telescope_type": "SST",
+    "telescope_position_x": 706.5179443359375,
+    "telescope_position_y": -849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 168,
+    "telescope_type": "SST",
+    "telescope_position_x": 706.5179443359375,
+    "telescope_position_y": 849.8089599609375,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 169,
+    "telescope_type": "SST",
+    "telescope_position_x": -1195.9840087890625,
+    "telescope_position_y": 369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 170,
+    "telescope_type": "SST",
+    "telescope_position_x": -1195.9840087890625,
+    "telescope_position_y": -369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 171,
+    "telescope_type": "SST",
+    "telescope_position_x": 1195.9840087890625,
+    "telescope_position_y": -369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 172,
+    "telescope_type": "SST",
+    "telescope_position_x": 1195.9840087890625,
+    "telescope_position_y": 369.9119873046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 173,
+    "telescope_type": "SST",
+    "telescope_position_x": -239.19699096679688,
+    "telescope_position_y": 1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 174,
+    "telescope_type": "SST",
+    "telescope_position_x": -239.19699096679688,
+    "telescope_position_y": -1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 175,
+    "telescope_type": "SST",
+    "telescope_position_x": 239.19699096679688,
+    "telescope_position_y": -1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 176,
+    "telescope_type": "SST",
+    "telescope_position_x": 239.19699096679688,
+    "telescope_position_y": 1109.7349853515625,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 177,
+    "telescope_type": "SST",
+    "telescope_position_x": -956.7870483398438,
+    "telescope_position_y": 739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 178,
+    "telescope_type": "SST",
+    "telescope_position_x": -956.7870483398438,
+    "telescope_position_y": -739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 179,
+    "telescope_type": "SST",
+    "telescope_position_x": 956.7870483398438,
+    "telescope_position_y": -739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 180,
+    "telescope_type": "SST",
+    "telescope_position_x": 956.7870483398438,
+    "telescope_position_y": 739.822998046875,
+    "telescope_position_z": 5.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 181,
+    "telescope_type": "SST",
+    "telescope_position_x": -391.60601806640625,
+    "telescope_position_y": -403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 182,
+    "telescope_type": "SST",
+    "telescope_position_x": -391.60601806640625,
+    "telescope_position_y": 403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 183,
+    "telescope_type": "SST",
+    "telescope_position_x": 391.60601806640625,
+    "telescope_position_y": 403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 184,
+    "telescope_type": "SST",
+    "telescope_position_x": 391.60601806640625,
+    "telescope_position_y": -403.7389831542969,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 185,
+    "telescope_type": "SST",
+    "telescope_position_x": -618.072998046875,
+    "telescope_position_y": 318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 186,
+    "telescope_type": "SST",
+    "telescope_position_x": -618.072998046875,
+    "telescope_position_y": -318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 187,
+    "telescope_type": "SST",
+    "telescope_position_x": 618.072998046875,
+    "telescope_position_y": -318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 188,
+    "telescope_type": "SST",
+    "telescope_position_x": 618.072998046875,
+    "telescope_position_y": 318.6109924316406,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 189,
+    "telescope_type": "SST",
+    "telescope_position_x": -435.3039855957031,
+    "telescope_position_y": -673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 190,
+    "telescope_type": "SST",
+    "telescope_position_x": -435.3039855957031,
+    "telescope_position_y": 673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 191,
+    "telescope_type": "SST",
+    "telescope_position_x": 435.3039855957031,
+    "telescope_position_y": 673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 192,
+    "telescope_type": "SST",
+    "telescope_position_x": 435.3039855957031,
+    "telescope_position_y": -673.18603515625,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 193,
+    "telescope_type": "SST",
+    "telescope_position_x": -870.6070556640625,
+    "telescope_position_y": -0.0,
+    "telescope_position_z": 10.0
+  },
+  {
+    "optical_focal_length": 5.599999904632568,
+    "camera_name": "DigiCam",
+    "telescope_id": 194,
+    "telescope_type": "SST",
+    "telescope_position_x": 870.6070556640625,
+    "telescope_position_y": 0.0,
+    "telescope_position_z": 10.0
   }
 ]
