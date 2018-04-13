@@ -3,6 +3,9 @@ language: java
 jdk:
 - oraclejdk8
 
+python:
+  - "3.5"
+
 before_install:
 - pip install pyro4
 - pip install git+https://github.com/cta-observatory/pyhessio
@@ -10,4 +13,3 @@ before_install:
 - pip install git+https://github.com/cta-observatory/ctapipe
 - pip install numpy
 - pip install astropy
--
