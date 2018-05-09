@@ -42,41 +42,42 @@ def fill_images_dict(event):
 
 
 @click.command()
-@click.argument('input_file', type=click.Path(exists=True))
+@click.argument('input_files', nargs=-1, type=click.Path(exists=True))
 @click.argument('output_file', type=click.Path(exists=False))
-@click.option('--limit', default=100, help='number of events to convert from the file.'
+@click.option('--limit', default=-1, help='number of events to convert from the file.'
                                            'If a negative value is given, the whole file'
                                            'will be read')
-def main(input_file, output_file, limit):
+def main(input_files, output_file, limit):
     '''
     The INPUT_FILE argument specifies the path to a simtel file. This script reads the
     camera definitions from there and puts them into a json file
     specified by OUTPUT_FILE argument.
     '''
-
-    event_source = EventSourceFactory.produce(
-        input_url=input_file,
-        max_events=limit if limit > 1 else None,
-    )
-
-    calibrator = CameraCalibrator(
-        eventsource=event_source,
-    )
     data = []
-    for id, event in tqdm(enumerate(event_source)):
-        if len(valid_triggerd_cameras(event)) < 2:
-            continue
-        calibrator.calibrate(event)
-        c = {}
-        # import IPython; IPython.embed()
 
-        c['array'] = fill_array_dict(valid_triggerd_telescope_ids(event))
-        c['event_id'] = id
-        c['images'] = fill_images_dict(event)
-        c['mc'] = fill_mc_dict(event)
+    for input_file in tqdm(input_files):
+        event_source = EventSourceFactory.produce(
+            input_url=input_file,
+            max_events=limit if limit > 1 else None,
+        )
+
+        calibrator = CameraCalibrator(
+            eventsource=event_source,
+        )
+
+        for id, event in tqdm(enumerate(event_source)):
+            if len(valid_triggerd_cameras(event)) < 2:
+                continue
+            calibrator.calibrate(event)
+            c = {}
+
+            c['array'] = fill_array_dict(valid_triggerd_telescope_ids(event))
+            c['event_id'] = id
+            c['images'] = fill_images_dict(event)
+            c['mc'] = fill_mc_dict(event)
 
 
-        data.append(c)
+            data.append(c)
 
 
     with gzip.open(output_file, 'wt') as of:

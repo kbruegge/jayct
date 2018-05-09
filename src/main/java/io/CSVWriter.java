@@ -16,6 +16,8 @@ public class CSVWriter implements Serializable{
     private PrintWriter writer;
     private String seperator = ",";
 
+    private boolean headerWritten = false;
+
     /**
      * Create a new CSVWriter for the given File.
      * @param file the file to create.
@@ -42,7 +44,10 @@ public class CSVWriter implements Serializable{
      * @throws IOException in case the file cannot not be written to.
      */
     public void append(ReconstrucedEvent e, double classPrediction) throws IOException {
-
+        if(!headerWritten){
+            writeHeader("id", "direction_x", "direction_y", "direction_z", "position_x", "position_z", "prediction");
+            headerWritten = true;
+        }
         String s = Joiner.on(seperator).join(
                     e.eventID,
                     e.direction.getX(),
@@ -51,10 +56,53 @@ public class CSVWriter implements Serializable{
                     e.impactPosition.getX(),
                     e.impactPosition.getY(),
                     classPrediction
-                );
+        );
         writer.println(s);
         writer.flush();
     }
+
+
+
+    /**
+     * Appends a row to the CSV file. Containing the values for
+     *
+     *    e.eventID,
+     *    mc.energy
+     *    mc.impact
+     *    e.direction.getX(),
+     *    e.direction.getY(),
+     *    e.direction.getZ(),
+     *    e.impactPosition.getX(),
+     *    e.impactPosition.getY(),
+     *    classPrediction
+     *
+     * @param event the event object returned from the ImageReader
+     * @param reconstrucedEvent the reconstructed event object
+     * @param classPrediction the prediction (aka. gammaness)
+     * @throws IOException in case the file cannot not be written to.
+     */
+    public void append(ImageReader.Event event, ReconstrucedEvent reconstrucedEvent, double classPrediction) throws IOException {
+        if(!headerWritten){
+            writeHeader("id","mc_alt", "mc_az", "mc_energy","mc_core_x", "mc_core_y",  "alt", "az", "core_x", "core_y", "prediction");
+            headerWritten = true;
+        }
+        String s = Joiner.on(seperator).join(
+                event.eventId,
+                event.mc.alt,
+                event.mc.az,
+                event.mc.energy,
+                event.mc.coreX,
+                event.mc.coreY,
+                reconstrucedEvent.alt,
+                reconstrucedEvent.az,
+                reconstrucedEvent.impactPosition.getX(),
+                reconstrucedEvent.impactPosition.getY(),
+                classPrediction
+        );
+        writer.println(s);
+        writer.flush();
+    }
+
 
     /**
      * Same as {@link CSVWriter#append }just without throwing a checked exception
@@ -72,7 +120,7 @@ public class CSVWriter implements Serializable{
 
 
     /**
-     * Write the given strings as a row to the CSV file. usefull for writing the header.
+     * Write the given strings as a row to the CSV file. useful for writing the header.
      * @param headerKeywords the strings to write into the row.
      */
     public void writeHeader(String... headerKeywords) {

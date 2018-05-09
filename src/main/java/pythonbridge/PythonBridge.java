@@ -2,7 +2,6 @@ package pythonbridge;
 
 import net.razorvine.pyro.NameServerProxy;
 import net.razorvine.pyro.PyroProxy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
 
 /**
  * This object is the heart of the connection between python and java. The constructor takes the
@@ -37,7 +35,7 @@ public class PythonBridge implements AutoCloseable {
     }
 
     private PythonBridge() {
-        this("python/pyroserver.py");
+        this("./pyroserver.py");
     }
 
     /**
@@ -51,18 +49,11 @@ public class PythonBridge implements AutoCloseable {
      * @throws IOException in case an error occurs when starting the processes
      */
     private PythonBridge(String pathToPythonScript) {
-        URL resource = PythonBridge.class.getClassLoader().getResource(pathToPythonScript);
-        if (resource != null) {
-            this.pathToPythonScript = resource.getPath();
-        } else {
-            System.out.println("Resource is empty. Wrong path?");
-            System.out.println("Stop the program.");
-            System.exit(-1);
-        }
-        if (!new File(this.pathToPythonScript).canRead()) {
-            log.error("File at " + this.pathToPythonScript + " is not readable.");
+        if (!new File(pathToPythonScript).canRead()) {
+            log.error("File at " + pathToPythonScript + " is not readable.");
             throw new RuntimeException("Python file not readable");
         }
+        this.pathToPythonScript = pathToPythonScript;
         stopped = true;
     }
 

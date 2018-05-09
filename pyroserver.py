@@ -1,19 +1,16 @@
+import Pyro4
+
 from ctapipe.reco import HillasReconstructor
 from ctapipe.image.hillas import hillas_parameters
 from ctapipe.image.cleaning import tailcuts_clean
 import numpy as np
 import pickle
-
 from collections import namedtuple
 import astropy.units as units
-
 import warnings
 from astropy.utils.exceptions import AstropyDeprecationWarning
-
 import traceback
-
 import os
-import Pyro4
 
 # do some horrible things to silencece astropy warnings in ctapipe
 warnings.filterwarnings('ignore', category=AstropyDeprecationWarning, append=True)
@@ -22,7 +19,7 @@ warnings.filterwarnings('ignore', category=FutureWarning, append=True)
 SubMomentParameters = namedtuple('SubMomentParameters', 'size,cen_x,cen_y,length,width,psi')
 
 dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, "../instrument_description.pkl")
+filename = os.path.join(dirname, "./instrument_description.pkl")
 
 
 def dummy_function_h_max(self, hillas_dict, subarray, tel_phi):
@@ -142,3 +139,17 @@ class Reconstructor():
                     'eventId': input["eventId"],
                     'cameraId': input["cameraId"]
                     }
+
+
+def main():
+    Pyro4.Daemon.serveSimple(
+            {
+                Reconstructor: 'streams.processors',
+            },
+            ns=True
+    )
+    print('Pyro daemon running.')
+
+
+if __name__ == '__main__':
+    main()

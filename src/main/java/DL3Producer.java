@@ -1,10 +1,10 @@
+import com.google.common.collect.Lists;
 import hexmap.TelescopeArray;
 import io.CSVWriter;
 import io.ImageReader;
+import me.tongfei.progressbar.ProgressBar;
 import ml.TreeEnsemblePredictor;
 import ml.Vectorizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import reconstruction.DirectionReconstruction;
 import reconstruction.HillasParametrization;
@@ -31,12 +31,12 @@ import static java.util.stream.Collectors.toList;
 @CommandLine.Command(name = "DL3Producer", description = "Executes CTA analysis")
 public class DL3Producer implements Callable<Void> {
 
-    static Logger log = LoggerFactory.getLogger(DL3Producer.class);
+//    static Logger log = LoggerFactory.getLogger(DL3Producer.class);
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Displays this help message and quits.")
     boolean helpRequested = false;
 
-    @CommandLine.Parameters(index = "0", paramLabel = "Input Folder for the images")
+    @CommandLine.Parameters(index = "0", paramLabel = "Input file for the images")
     String inputFolder = " ";
 
     @CommandLine.Parameters(index = "1", paramLabel = "Input File for the classifier model")
@@ -46,6 +46,7 @@ public class DL3Producer implements Callable<Void> {
     String outputFile= " ";
 
     public static void main (String[] args) throws Exception {
+        System.out.println(args);
         CommandLine.call(new DL3Producer(), System.out, args);
     }
 
@@ -56,22 +57,26 @@ public class DL3Producer implements Callable<Void> {
             CommandLine.usage(this, System.err);
             return null;
         }
-
+        List<Path> paths;
+        Path input = Paths.get(inputFolder);
+        if (Files.isDirectory(input)){
+            paths = Files.list(input)
+                    .filter(p -> p.toString().endsWith(".json") || p.toString().endsWith(".json.gz"))
+                    .sorted()
+                    .collect(toList());
+        } else {
+            paths = Lists.newArrayList(input);
+        }
+        System.out.println(paths);
         TreeEnsemblePredictor model = new TreeEnsemblePredictor(Paths.get(modelFile));
-
-        List<Path> paths = Files.list(Paths.get(inputFolder))
-                .filter(p -> p.toString().endsWith(".json") || p.toString().endsWith(".json.gz"))
-                .sorted()
-                .collect(toList());
 
         CSVWriter writer = new CSVWriter(new File(outputFile));
 
         for (Path p : paths) {
-
-            log.info("Analyzing file: {}", p.toString());
+            System.out.println("Analyzing file: " + p.toString());
 
             ImageReader events = ImageReader.fromPath(p);
-            for (ImageReader.Event event : events) {
+            for (ImageReader.Event event : ProgressBar.wrap(events, p.toString())) {
                 List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
                 List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
 
@@ -79,7 +84,7 @@ public class DL3Producer implements Callable<Void> {
 
                 double prediction = predictParticleType(moments, model);
 
-                writer.append(reconstrucedEvent, prediction);
+                writer.append(event, reconstrucedEvent, prediction);
 
             }
         }
@@ -87,15 +92,6 @@ public class DL3Producer implements Callable<Void> {
         return null;
     }
 
-    private ReconstrucedEvent reconstructEvent(ImageReader.Event event){
-
-        List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-        List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-
-        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
-
-        return reconstrucedEvent;
-    }
 
     private double predictParticleType(List<Moments> moments, TreeEnsemblePredictor model){
         int numberOfTriggeredTelescopes = moments.size();
