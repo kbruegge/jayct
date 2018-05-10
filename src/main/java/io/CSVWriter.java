@@ -1,6 +1,8 @@
 package io;
 
 import com.google.common.base.Joiner;
+import reconstruction.containers.ArrayEvent;
+import reconstruction.containers.Moments;
 import reconstruction.containers.ReconstrucedEvent;
 
 import java.io.File;
@@ -67,6 +69,62 @@ public class CSVWriter implements Serializable{
      * Appends a row to the CSV file. Containing the values for
      *
      *    e.eventID,
+     *    e.direction.getX(),
+     *    e.direction.getY(),
+     *    e.direction.getZ(),
+     *    e.impactPosition.getX(),
+     *    e.impactPosition.getY(),
+     *    classPrediction
+     *
+     *
+     * @param mc the montecarlo information for a given run
+     * @throws IOException in case the file cannot not be written to.
+     */
+    public void append(ImageReader.MC mc) throws IOException {
+        if(!headerWritten){
+            writeHeader(
+                    "run_id",
+                    "mc_max_energy",
+                    "mc_min_energy",
+                    "mc_spectral_index",
+                    "mc_max_altitude",
+                    "mc_min_altitude",
+                    "mc_max_azimuth",
+                    "mc_min_azimuth",
+                    "mc_max_scatter_range",
+                    "mc_min_scatter_range",
+                    "mc_max_viewcone_radius",
+                    "mc_min_viewcone_radius",
+                    "mc_num_showers",
+                    "mc_num_reuse"
+                    );
+            headerWritten = true;
+        }
+        String s = Joiner.on(seperator).join(
+                mc.runId,
+                mc.mcMaxEnergy,
+                mc.mcMinEnergy,
+                mc.mcSpectralIndex,
+                mc.mcMaxAltitude,
+                mc.mcMinAltitude,
+                mc.mcMaxAzimuth,
+                mc.mcMinAzimuth,
+                mc.mcMaxScatterRange,
+                mc.mcMinScatterRange,
+                mc.mcMaxViewConeRadius,
+                mc.mcMinViewConeRadius,
+                mc.mcNumShowers,
+                mc.mcNumReuse
+        );
+        writer.println(s);
+        writer.flush();
+    }
+
+
+    /**
+     * Appends a row to the CSV file. Containing the values for
+     *
+     *    e.eventID,
      *    mc.energy
      *    mc.impact
      *    e.direction.getX(),
@@ -83,20 +141,22 @@ public class CSVWriter implements Serializable{
      */
     public void append(ImageReader.Event event, ReconstrucedEvent reconstrucedEvent, double classPrediction) throws IOException {
         if(!headerWritten){
-            writeHeader("id","mc_alt", "mc_az", "mc_energy","mc_core_x", "mc_core_y",  "alt", "az", "core_x", "core_y", "prediction");
+            writeHeader("array_event_id", "run_id",  "mc_alt", "mc_az", "mc_energy", "mc_core_x", "mc_core_y",  "alt_prediction", "az_prediction", "core_x_prediction", "core_y_prediction", "num_triggered_telescopes", "rta_gamma_prediction");
             headerWritten = true;
         }
         String s = Joiner.on(seperator).join(
                 event.eventId,
-                event.mc.alt,
-                event.mc.az,
-                event.mc.energy,
-                event.mc.coreX,
-                event.mc.coreY,
+                event.runId,
+                event.mc.mcAlt,
+                event.mc.mcAz,
+                event.mc.mcEnergy,
+                event.mc.mcCoreX,
+                event.mc.mcCoreY,
                 reconstrucedEvent.alt,
                 reconstrucedEvent.az,
                 reconstrucedEvent.impactPosition.getX(),
                 reconstrucedEvent.impactPosition.getY(),
+                event.array.numTriggeredTelescopes,
                 classPrediction
         );
         writer.println(s);
@@ -104,20 +164,87 @@ public class CSVWriter implements Serializable{
     }
 
 
-    /**
-     * Same as {@link CSVWriter#append }just without throwing a checked exception
-     *
-     * @param e same as {@link CSVWriter#append}
-     * @param classPrediction same as {@link CSVWriter#append}
-     */
-    public void appendUnchecked(ReconstrucedEvent e, double classPrediction){
-        try {
-            append(e, classPrediction);
-        } catch (IOException e1) {
-            throw new RuntimeException(e1);
+    public void append(ImageReader.Event event, ReconstrucedEvent reconstrucedEvent, ArrayEvent arrayEvent) throws IOException {
+        if(!headerWritten){
+            writeHeader(
+                    "array_event_id",
+                    "run_id",
+                    "mc_alt", "mc_az",
+                    "mc_energy",
+                    "mc_core_x", "mc_core_y",
+                    "alt_prediction", "az_prediction",
+                    "core_x_prediction", "core_y_prediction",
+                    "num_triggered_telescopes",
+                    "num_triggered_lst", "num_triggered_mst", "num_triggered_sst",
+                    "total_intensity"
+            );
+            headerWritten = true;
         }
+        String s = Joiner.on(seperator).join(
+                event.eventId,
+                event.runId,
+                event.mc.mcAlt,
+                event.mc.mcAz,
+                event.mc.mcEnergy,
+                event.mc.mcCoreX,
+                event.mc.mcCoreY,
+                reconstrucedEvent.alt,
+                reconstrucedEvent.az,
+                reconstrucedEvent.impactPosition.getX(),
+                reconstrucedEvent.impactPosition.getY(),
+                event.array.numTriggeredTelescopes,
+                arrayEvent.numTriggeredLST,
+                arrayEvent.numTriggeredMST,
+                arrayEvent.numTriggeredSST,
+                arrayEvent.totalIntensity
+        );
+        writer.println(s);
+        writer.flush();
     }
 
+
+
+    public void append(Moments m, double distance, long runId) throws IOException {
+        if(!headerWritten){
+            writeHeader(
+                    "array_event_id",
+                    "run_id",
+                    "camera_id",
+                    "intensity",
+                    "kurtosis",
+                    "skewness",
+                    "length",
+                    "width",
+                    "phi",
+                    "r",
+                    "x",
+                    "y",
+                    "miss",
+                    "numberOfPixel",
+                    "distance_to_core"
+            );
+            headerWritten = true;
+        }
+        String s = Joiner.on(seperator).join(
+                m.eventID,
+                runId,
+                m.cameraID,
+                m.intensity,
+                m.kurtosis,
+                m.skewness,
+                m.length,
+                m.width,
+                m.phi,
+                m.r,
+                m.meanX,
+                m.meanY,
+                m.miss,
+                m.numberOfPixel,
+                distance
+        );
+        writer.println(s);
+        writer.flush();
+    }
 
     /**
      * Write the given strings as a row to the CSV file. useful for writing the header.

@@ -12,6 +12,7 @@ import java.util.HashMap;
  */
 public class Moments {
 
+
     public Moments(long eventID, int telescopeID, int cameraID, int numberOfPixel, double width,
                    double length, double delta, double skewness, double kurtosis, double phi,
                    double miss, double r, double meanX, double meanY, double size) {
@@ -30,6 +31,7 @@ public class Moments {
         this.meanX = meanX;
         this.meanY = meanY;
         this.size = size;
+        this.intensity = size;
     }
 
     public HashMap<String, Object> toMap(){
@@ -49,6 +51,7 @@ public class Moments {
         map.put("meanX", meanX);
         map.put("meanY", meanY);
         map.put("size", size);
+        map.put("intensity", size);
         return map;
     }
 
@@ -68,6 +71,7 @@ public class Moments {
     public final double meanX;
     public final double meanY;
     public final double size;
+    public final double intensity;
 
     @Override
     public String toString() {

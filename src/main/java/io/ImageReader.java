@@ -92,12 +92,14 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
         public MC mc;
         public Array array;
         public long eventId;
+        public long runId;
         public String timestamp;
 
         @Override
         public String toString() {
             return MoreObjects.toStringHelper(this)
                     .add("ID", eventId)
+                    .add("runID", runId)
                     .add("Num Triggered Tels", images.size())
                     .add("MC", mc)
                     .add("timestamp", timestamp)
@@ -119,28 +121,32 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
      * Saving the type of the primary particle might also be useful.
      */
     public class MC {
-        public double energy, alt, az, coreY, coreX;
+        public double mcEnergy, mcAlt, mcAz, mcCoreY, mcCoreX,
+                mcMaxEnergy, mcMinEnergy, mcMaxScatterRange, mcMinScatterRange,
+                mcMaxViewConeRadius, mcMinViewConeRadius, mcMaxAltitude, mcMinAltitude, mcMaxAzimuth, mcMinAzimuth;
+        public int mcSpectralIndex, mcNumShowers, runId, mcNumReuse;
+
         public String type;
 
         @Override
         public String toString() {
             return  MoreObjects.toStringHelper(this)
                     .add("type", type)
-                    .add("energy", energy)
-                    .add("alt", alt)
-                    .add("az", az)
-                    .add("impact x", coreX)
-                    .add("impact y", coreY)
+                    .add("energy", mcEnergy)
+                    .add("alt", mcAlt)
+                    .add("az", mcAz)
+                    .add("impact x", mcCoreX)
+                    .add("impact y", mcCoreY)
                     .toString();
         }
 
         public HashMap<String, Object> toMap() {
             HashMap<String, Object> map = new HashMap<>();
-            map.put("energy", energy);
-            map.put("alt", alt);
-            map.put("az", az);
-            map.put("coreY", coreY);
-            map.put("coreX", coreX);
+            map.put("energy", mcEnergy);
+            map.put("alt", mcAlt);
+            map.put("az", mcAz);
+            map.put("coreY", mcCoreX);
+            map.put("coreX", mcCoreY);
             map.put("type", type);
             return map;
         }

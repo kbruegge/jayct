@@ -1,6 +1,9 @@
 package hexmap;
 
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 /**
  * Contains all the information needed for a single telescope.
  * Name of the telescope, Position, Optical properties etc..
@@ -56,6 +59,13 @@ public class TelescopeDefinition {
         this.telescopePositionZ = telescopePositionZ;
     }
 
+    public Vector3D getTelescopePosition() {
+        return new Vector3D(telescopePositionX, telescopePositionY, telescopePositionZ);
+    }
+
+    public Vector2D getTelescopePosition2D() {
+        return new Vector2D(telescopePositionX, telescopePositionY);
+    }
 
     /**
      * Enum of telescope types.
