@@ -6,6 +6,7 @@ import json
 import gzip
 import pyhessio
 import numpy as np
+import os
 
 
 names_to_id = {'LSTCam': 1, 'NectarCam': 2, 'FlashCam': 3, 'DigiCam': 4, 'CHEC': 5}
@@ -89,19 +90,20 @@ def fill_images_dict(event):
 
 @click.command()
 @click.argument('input_files', nargs=-1, type=click.Path(exists=True))
-@click.argument('output_file', type=click.Path(exists=False))
+@click.argument('output_dir', type=click.Path(exists=False))
 @click.option('--limit', default=-1, help='number of events to convert from the file.'
                                            'If a negative value is given, the whole file'
                                            'will be read')
-def main(input_files, output_file, limit):
+def main(input_files, output_dir, limit):
     '''
     The INPUT_FILE argument specifies the path to a simtel file. This script reads the
     camera definitions from there and puts them into a json file
     specified by OUTPUT_FILE argument.
     '''
-    data = []
+
 
     for input_file in tqdm(input_files):
+        data = []
         run_information = read_simtel_mc_information(input_file)
 
         event_source = EventSourceFactory.produce(
@@ -128,9 +130,12 @@ def main(input_files, output_file, limit):
 
             data.append(c)
 
-
-    with gzip.open(output_file, 'wt') as of:
-        json.dump(data, of, indent=2, cls=NumpyEncoder)
+        name = os.path.basename(input_file)
+        name, _ = os.path.splitext(name)
+        output_name = os.path.join(output_dir, name + '.json.gz')
+        print(f'Writing to file: {output_name}')
+        with gzip.open(output_name, 'wt') as of:
+            json.dump(data, of, indent=2, cls=NumpyEncoder)
 
 
 
