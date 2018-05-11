@@ -111,8 +111,8 @@ public class CSVWriter implements Serializable{
                 mc.mcMinAzimuth,
                 mc.mcMaxScatterRange,
                 mc.mcMinScatterRange,
-                mc.mcMaxViewConeRadius,
-                mc.mcMinViewConeRadius,
+                mc.mcMaxViewconeRadius,
+                mc.mcMinViewconeRadius,
                 mc.mcNumShowers,
                 mc.mcNumReuse
         );

@@ -123,7 +123,7 @@ public class ImageReader implements Iterable<ImageReader.Event>, Closeable, Seri
     public class MC {
         public double mcEnergy, mcAlt, mcAz, mcCoreY, mcCoreX,
                 mcMaxEnergy, mcMinEnergy, mcMaxScatterRange, mcMinScatterRange,
-                mcMaxViewConeRadius, mcMinViewConeRadius, mcMaxAltitude, mcMinAltitude, mcMaxAzimuth, mcMinAzimuth;
+                mcMaxViewconeRadius, mcMinViewconeRadius, mcMaxAltitude, mcMinAltitude, mcMaxAzimuth, mcMinAzimuth;
         public int mcSpectralIndex, mcNumShowers, runId, mcNumReuse;
 
         public String type;
