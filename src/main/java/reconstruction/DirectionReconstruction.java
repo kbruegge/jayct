@@ -178,6 +178,7 @@ public class DirectionReconstruction {
             }
         }
 
+        //we get a bunch of intersections between pairs fo planes and then average over all resulting directions.
         Optional<Vector3D> direction = tuples.stream()
                 .map(l -> {
 
@@ -194,6 +195,10 @@ public class DirectionReconstruction {
                     // # the origin, the other one the direction of the gamma) it
                     // # doesn't matter which we pick but it should at least be
                     // # consistent: make sure to always take the "upper" solution.
+                    //
+                    // This comment is somewhat misleading. You simply build the cross product of two vectors.
+                    // The result can point in one of two directions. It does'nt really matter. We  always choose the
+                    // one pointing 'upwards'
                     if (product.getZ() < 0) {
                         product = product.scalarMultiply(-1);
                     }
