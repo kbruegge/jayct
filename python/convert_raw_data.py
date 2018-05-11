@@ -94,7 +94,8 @@ def fill_images_dict(event):
 @click.option('--limit', default=-1, help='number of events to convert from the file.'
                                            'If a negative value is given, the whole file'
                                            'will be read')
-def main(input_files, output_dir, limit):
+@click.option('--skip/--no-skip', default=True, help='skip existing file if true')
+def main(input_files, output_dir, limit, skip):
     '''
     The INPUT_FILE argument specifies the path to a simtel file. This script reads the
     camera definitions from there and puts them into a json file
@@ -103,9 +104,21 @@ def main(input_files, output_dir, limit):
 
 
     for input_file in tqdm(input_files):
-        data = []
-        run_information = read_simtel_mc_information(input_file)
+        name = os.path.basename(input_file)
+        name, _ = os.path.splitext(name)
+        output_name = os.path.join(output_dir, name + '.json.gz')
 
+        if skip and os.path.exists(output_name):
+            print(f'Skipping file {output_name} because it exists')
+            continue
+
+        try:
+            run_information = read_simtel_mc_information(input_file)
+        except StopIteration:
+            print(f'Skipping file {input_file}. Cause it couldn\'t  be read')
+            continue
+
+        data = []
         event_source = EventSourceFactory.produce(
             input_url=input_file,
             max_events=limit if limit > 1 else None,
@@ -130,9 +143,7 @@ def main(input_files, output_dir, limit):
 
             data.append(c)
 
-        name = os.path.basename(input_file)
-        name, _ = os.path.splitext(name)
-        output_name = os.path.join(output_dir, name + '.json.gz')
+
         print(f'Writing to file: {output_name}')
         with gzip.open(output_name, 'wt') as of:
             json.dump(data, of, indent=2, cls=NumpyEncoder)
