@@ -204,7 +204,7 @@ public class CSVWriter implements Serializable{
 
 
 
-    public void append(Moments m, double distance, long runId) throws IOException {
+    public void append(Moments m, double distance, long runId, String telescopeTypeName) throws IOException {
         if(!headerWritten){
             writeHeader(
                     "array_event_id",
@@ -221,7 +221,8 @@ public class CSVWriter implements Serializable{
                     "y",
                     "miss",
                     "numberOfPixel",
-                    "distance_to_core"
+                    "distance_to_core",
+                    "telescope_type_name"
             );
             headerWritten = true;
         }
@@ -240,7 +241,8 @@ public class CSVWriter implements Serializable{
                 m.meanY,
                 m.miss,
                 m.numberOfPixel,
-                distance
+                distance,
+                telescopeTypeName
         );
         writer.println(s);
         writer.flush();

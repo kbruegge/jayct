@@ -1,7 +1,4 @@
-import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
-import hexmap.TelescopeArray;
-import hexmap.TelescopeDefinition;
 import io.CSVWriter;
 import io.ImageReader;
 import me.tongfei.progressbar.ProgressBar;
@@ -17,11 +14,10 @@ import reconstruction.containers.ShowerImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static hexmap.TelescopeArray.*;
+import static hexmap.TelescopeArray.cta;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -89,8 +85,10 @@ public class DL2Producer implements Callable<Void> {
 
                 arrayEventsWriter.append(event, reconstrucedEvent, new ArrayEvent(event, moments));
                 for (Moments moment : moments) {
+                    String telescopeTypeName = cta().telescopeFromId(moment.telescopeID).telescopeType.name();
                     double distance = cta().telescopeFromId(moment.telescopeID).getTelescopePosition2D().distance(reconstrucedEvent.impactPosition);
-                    telescopeEventsWriter.append(moment, distance, event.runId);
+                    telescopeEventsWriter.append(moment, distance, event.runId, telescopeTypeName);
+
                 }
             }
         }
