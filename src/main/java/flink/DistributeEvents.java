@@ -118,7 +118,7 @@ public class DistributeEvents implements Callable<Void>, Serializable {
                             .average()
                             .orElse(0);
 
-                    ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+                    ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.mcAlt, event.mc.mcAz);
 
                     return Tuple2.of(reconstrucedEvent, prediction);
                 }

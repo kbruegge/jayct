@@ -46,7 +46,7 @@ public class AnalysisTest {
             List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
             List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
 
-            ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+            ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.mcAlt, event.mc.mcAz);
 
             if (reconstrucedEvent.direction.isNaN()){
                 continue;
@@ -97,7 +97,7 @@ public class AnalysisTest {
                     .average()
                     .orElse(0);
 
-            ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+            ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.mcAlt, event.mc.mcAz);
 
             if (reconstrucedEvent.direction.isNaN()){
                 continue;

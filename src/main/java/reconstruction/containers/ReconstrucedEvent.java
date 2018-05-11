@@ -2,6 +2,8 @@ package reconstruction.containers;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
+import hexmap.TelescopeArray;
+import hexmap.TelescopeDefinition;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -26,7 +28,7 @@ public final class ReconstrucedEvent {
 
         double[] alt_az = fromCartesian(this.direction);
         this.alt = alt_az[0];
-        this.az= alt_az[1];
+        this.az = alt_az[1];
     }
 
     private double[] fromCartesian(Vector3D cartesian){
