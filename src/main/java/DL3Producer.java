@@ -87,15 +87,15 @@ public class DL3Producer implements Callable<Void> {
         return null;
     }
 
-    private ReconstrucedEvent reconstructEvent(ImageReader.Event event){
-
-        List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-        List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-
-        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
-
-        return reconstrucedEvent;
-    }
+//    private ReconstrucedEvent reconstructEvent(ImageReader.Event event){
+//
+//        List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
+//        List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
+//
+//        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
+//
+//        return reconstrucedEvent;
+//    }
 
     private double predictParticleType(List<Moments> moments, TreeEnsemblePredictor model){
         int numberOfTriggeredTelescopes = moments.size();

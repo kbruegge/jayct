@@ -54,3 +54,18 @@ associated with it. For now we store the images in JSON files having
 a similar structure as the event containers in [ctapipe](https://github.com/cta-observatory/ctapipe/)
 (their structure has changed since this program was written)
   
+## Local Execution
+
+Build the jar using gradle.
+
+```
+gradle build
+gradle jar
+```
+
+and then execture whatever classpath you want
+
+```
+java -cp build/libs/jayct-0.1.0-SNAPSHOT-all.jar DL3Producer proton_images.jons.gz src/test/resources/iris_rf.json "./test_dl3.csv"
+
+```
