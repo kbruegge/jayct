@@ -39,8 +39,6 @@ public class TreeEnsemblePredictorRichMap extends RichMapFunction<Tuple2<Moments
                 moments.length,
                 moments.skewness,
                 moments.kurtosis,
-                moments.phi,
-                moments.miss,
                 moments.size,
                 TelescopeArray.cta().telescopeFromId(moments.telescopeID).telescopeType.ordinal()
         ).createFloatVector();

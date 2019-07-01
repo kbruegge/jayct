@@ -1,10 +1,15 @@
 package reconstruction;
 
+import coordinates.CameraCoordinate;
+import org.apache.commons.math3.linear.EigenDecomposition;
 import reconstruction.containers.Moments;
 import reconstruction.containers.ShowerImage;
+import statistics.Weighted1dStatistics;
+import statistics.Weighted2dStatistics;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.lang.Math.*;
 import static java.util.stream.Collectors.toList;
@@ -28,84 +33,104 @@ public class HillasParametrization {
     }
 
 
+    /**
+     * Transforms camera coordinates (x, y) into longitudinal and transversal
+     * ellipse coordinates (l, t). The ellipse coordinate system is defined by
+     * the center of gravity (x,y) and the angle between the major axis and the
+     * camera x-axis (delta in radians).
+     *
+     * @param x
+     * @param y
+     * @param cogX
+     * @param cogY
+     * @param delta
+     * @return an array having two elements {l, t}
+     */
+    public static double[] transformToEllipseCoordinates(double x, double y, double cogX, double cogY, double delta) {
+        double translatedX = x - cogX;
+        double translatedY = y - cogY;
+
+        double sinDelta = Math.sin(delta);
+        double cosDelta = Math.cos(delta);
+
+        double l = cosDelta * translatedX + sinDelta * translatedY;
+        double t = -sinDelta * translatedX + cosDelta * translatedY;
+
+        return new double[]{l, t};
+    }
+
+    public static double calculateDelta(EigenDecomposition eig) {
+        // calculate the angle between the eigenvector and the camera axis.
+        // So basicly the angle between the major-axis of the ellipse and the
+        // camrera axis.
+        // this will be written in radians.
+        double longitudinalComponent = eig.getEigenvector(0).getEntry(0);
+        double transverseComponent = eig.getEigenvector(0).getEntry(1);
+        return Math.atan(transverseComponent / longitudinalComponent);
+    }
+
     public static Moments fromShowerImage(ShowerImage showerImage) {
 
-        double size = showerImage.signalPixels.stream().mapToDouble(e -> e.weight).sum();
-        double sumX = 0;
-        double sumY = 0;
+        double[] showerWeights = showerImage.signalPixels.stream().mapToDouble((p) -> p.weight).toArray();
 
-        // find weighted center of the shower pixels.
-        for (ShowerImage.SignalPixel pixel : showerImage.signalPixels) {
-            sumX += pixel.xPositionInMM * pixel.weight;
-            sumY += pixel.yPositionInMM * pixel.weight;
-            size += pixel.weight;
+        double[] pixelX = showerImage.signalPixels.stream().mapToDouble(p -> p.xPositionInM).toArray();
+        double[] pixelY = showerImage.signalPixels.stream().mapToDouble(p -> p.yPositionInM).toArray();
+
+        Weighted2dStatistics stats2d = Weighted2dStatistics.ofArrays(pixelX, pixelY, showerWeights);
+
+        double size = stats2d.weightsSum;
+
+        double x = stats2d.mean[0];
+        double y =  stats2d.mean[1];
+
+        if(stats2d.N < 2){
+            return new Moments(
+                    showerImage.eventId,
+                    showerImage.telescopeId,
+                    showerImage.signalPixels.size(),
+                    Double.NaN,
+                    Double.NaN,
+                    Double.NaN,
+                    Double.NaN,
+                    Double.NaN,
+                    Double.NaN,
+                    Double.NaN,
+                    Double.NaN,
+                    Double.NaN
+                    );
+        }
+        EigenDecomposition eig = new EigenDecomposition(stats2d.covarianceMatrix);
+        double length = Math.sqrt(eig.getRealEigenvalue(0));
+        double width = Math.sqrt(eig.getRealEigenvalue(1));
+        double delta = calculateDelta(eig);
+
+        // Calculation of the showers statistical moments (Variance, Skewness, Kurtosis)
+        // Rotate the shower by the angle delta in order to have the ellipse
+        // main axis in parallel to the Camera-Coordinates X-Axis
+        double[] longitudinalCoordinates = new double[showerImage.signalPixels.size()];
+
+        for (int i = 0; i < showerImage.signalPixels.size(); i++) {
+            // translate to center
+            double[] c = transformToEllipseCoordinates(pixelX[i], pixelY[i],  x, y, delta);
+            // fill array of new shower coordinates
+            longitudinalCoordinates[i] = c[0];
         }
 
-        final double meanX = sumX / size;
-        final double meanY = sumY / size;
+        Weighted1dStatistics statsLong = Weighted1dStatistics.ofArrays(longitudinalCoordinates, showerWeights);
 
-        //calculate the covariance matrix
-        double sxx = 0, syy = 0, sxy = 0;
-        for (ShowerImage.SignalPixel p : showerImage.signalPixels) {
-            sxx += p.weight * pow((p.xPositionInMM - meanX), 2);
-            syy += p.weight * pow((p.yPositionInMM - meanY), 2);
-            sxy += p.weight * (p.xPositionInMM - meanX) * (p.yPositionInMM - meanY);
-        }
-
-        sxx /= size;
-        syy /= size;
-        sxy /= size;
-
-        //now analytically calculate the eigenvalues and vectors.
-        double d0 = syy - sxx;
-        double d1 = 2 * sxy;
-        double d2 = d0 + sqrt(d0 * d0 + d1 * d1);
-        double a = d2 / d1;
-
-        //apperently things can get less than zero. just set to  zero then.
-        double width = sqrt(max((syy + a * a * sxx - 2 * a * sxy) / (1 + a * a), 0));
-        double length = sqrt(max((sxx + a * a * syy - 2 * a * sxy) / (1 + a * a), 0));
-
-        double delta = atan(a);
-        double cos_delta = 1 / sqrt(1 + a * a);
-        double sin_delta = a * cos_delta;
-
-        //I dont know what this is
-        double b = meanY - a * meanX;
-        double miss = abs(b / (sqrt(1 + a * a)));
-        double r = sqrt(meanX * meanX + meanY * meanY);
-        double phi = atan2(meanY, meanX); //wtf?
-
-        //calculate higher order moments
-        double skewness_a = 0, skewness_b = 0, kurtosis_a = 0, kurtosis_b = 0;
-        for (ShowerImage.SignalPixel p : showerImage.signalPixels) {
-            double sk = cos_delta * (p.xPositionInMM - meanX) + sin_delta * (p.yPositionInMM - meanY);
-            skewness_a += p.weight * pow(sk, 3);
-            skewness_b += p.weight * pow(sk, 2);
-
-            kurtosis_a += p.weight * pow(sk, 4);
-            kurtosis_b += p.weight * pow(sk, 2);
-        }
-
-        double skewness = (skewness_a / size) / pow(skewness_b / size, 3.0 / 2.0);
-        double kurtosis = (kurtosis_a / size) / pow(kurtosis_b / size, 2);
-
-
+        double r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
         return new Moments(
                 showerImage.eventId,
-                showerImage.cameraId,
-                showerImage.cameraId,
+                showerImage.telescopeId,
                 showerImage.signalPixels.size(),
                 width,
                 length,
                 delta,
-                skewness,
-                kurtosis,
-                phi,
-                miss,
+                statsLong.skewness,
+                statsLong.kurtosis,
                 r,
-                meanX,
-                meanY,
+                x,
+                y,
                 size);
     }
 }

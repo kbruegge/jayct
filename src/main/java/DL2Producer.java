@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static java.lang.Math.PI;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -30,10 +29,10 @@ import static java.util.stream.Collectors.toList;
  * Created by mackaiver on 04.12.17.
  */
 
-@CommandLine.Command(name = "DL3Producer", description = "Executes CTA analysis")
-public class DL3Producer implements Callable<Void> {
+@CommandLine.Command(name = "DL2Producer", description = "Executes CTA analysis")
+public class DL2Producer implements Callable<Void> {
 
-    static Logger log = LoggerFactory.getLogger(DL3Producer.class);
+    static Logger log = LoggerFactory.getLogger(DL2Producer.class);
 
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Displays this help message and quits.")
     boolean helpRequested = false;
@@ -41,14 +40,11 @@ public class DL3Producer implements Callable<Void> {
     @CommandLine.Parameters(index = "0", paramLabel = "Input Folder for the images")
     String inputFolder = " ";
 
-    @CommandLine.Parameters(index = "1", paramLabel = "Input File for the classifier model")
-    String modelFile = " ";
-
-    @CommandLine.Parameters(index = "2", paramLabel = "Output path for DL3")
+    @CommandLine.Parameters(index = "1", paramLabel = "Output path for DL2")
     String outputFile= " ";
 
     public static void main (String[] args) throws Exception {
-        CommandLine.call(new DL3Producer(), System.out, args);
+        CommandLine.call(new DL2Producer(), System.out, args);
     }
 
     @Override
@@ -60,14 +56,10 @@ public class DL3Producer implements Callable<Void> {
         }
 
 
-        double alt = 70;
-        double az= 180;
-
         Path file = new File(inputFolder).toPath();
 
         boolean isDirectory = Files.isDirectory(file);   // Check if it's a directory
 
-        TreeEnsemblePredictor model = new TreeEnsemblePredictor(Paths.get(modelFile));
 
         List<Path> paths = new ArrayList<>();
 
@@ -83,13 +75,15 @@ public class DL3Producer implements Callable<Void> {
         CSVWriter writer = new CSVWriter(new File(outputFile));
 
         writer.writeHeader("event_id",
-                "alt",
-                "az",
-                "impact_x",
-                "impact_y",
-                "prediction",
-                "mc_alt",
-                "mc_az",
+                "telescope_id",
+                "length",
+                "width",
+                "kurtosis",
+                "skewness",
+                "size",
+                "number_of_pixel",
+                "r",
+                "delta",
                 "mc_energy"
         );
         for (Path p : paths) {
@@ -101,48 +95,16 @@ public class DL3Producer implements Callable<Void> {
                 List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
                 List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
 
-                ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, alt, az);
+                for (Moments moment: moments){
+                    writer.append(moment, event.mc.energy);
+                }
 
-                double prediction = predictParticleType(moments, model);
 
-                writer.append(reconstrucedEvent, prediction, event.mc.alt, event.mc.az, event.mc.energy);
             }
         }
 
         return null;
     }
 
-//    private ReconstrucedEvent reconstructEvent(ImageReader.Event event){
-//
-//        List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-//        List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-//
-//        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
-//
-//        return reconstrucedEvent;
-//    }
-
-    private double predictParticleType(List<Moments> moments, TreeEnsemblePredictor model){
-        int numberOfTriggeredTelescopes = moments.size();
-
-        return moments.stream()
-                .map(m ->
-                        new Vectorizer().of(
-                                numberOfTriggeredTelescopes,
-                                m.numberOfPixel,
-                                m.width,
-                                m.length,
-                                m.skewness,
-                                m.kurtosis,
-                                m.size,
-                                TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                        ).createFloatVector()
-                )
-                .mapToDouble(f ->
-                        (double) model.predictProba(f)[0]
-                )
-                .average()
-                .orElse(0);
-    }
 
 }

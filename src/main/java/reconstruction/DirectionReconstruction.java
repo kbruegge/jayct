@@ -1,10 +1,10 @@
 package reconstruction;
 
 import com.google.common.collect.Lists;
+import coordinates.CameraCoordinate;
+import coordinates.HorizontalCoordinate;
 import hexmap.TelescopeArray;
 import hexmap.TelescopeDefinition;
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
-import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -37,44 +37,6 @@ public class DirectionReconstruction {
 
 
     /**
-     * Convert in-camera coordinates to direction vectors in 3D-space.
-     *
-     * @param x in-camera coordinates in meter
-     * @param y in-camera coordinates in meter
-     * @param phi pointing in radians
-     * @param theta pointing in radians
-     * @param focalLength focal length of the telescope in meter
-     * @param cameraRotation rotation of the camera within the telescope housing in radians
-     * @return a direction vector, (x,y,z), corresponding to the direction of the given point in the camera
-     */
-    private static Vector3D cameraCoordinateToDirectionVector
-    (
-            double x,
-            double y,
-            double phi,
-            double theta,
-            double focalLength,
-            double cameraRotation
-    ){
-
-        //angle between x-axis of camera and the line connecting 0,0 with x,y
-        double alpha = atan2(y, x);
-
-        //distance from center of camera
-        double rho = sqrt(pow(x, 2) + pow(y, 2));
-        double beta = rho / focalLength;
-
-        Vector3D telescopeDirection = cartesianFromPolar(1, phi, theta);
-        Vector3D newAxis = cartesianFromPolar(1, phi, theta + beta);
-
-        Rotation rotation = new Rotation(newAxis, alpha - cameraRotation, RotationConvention.FRAME_TRANSFORM);
-
-
-        return rotation.applyTo(telescopeDirection);
-
-    }
-
-    /**
      * Go from spherical coordinates to cartesian coordinates.
      * This assumes the typical 'mathematical conventions', or ISO, for naming these angles.
      * (radius r, inclination θ, azimuth φ)
@@ -90,15 +52,30 @@ public class DirectionReconstruction {
      * (phi and theta are switched).
      *
      *
-     * @param phi pointing phi angle of a telescope
-     * @param theta pointing theta angle of a telescope
+     * @param phi_rad pointing phi angle of a telescope
+     * @param theta_rad pointing theta angle of a telescope
      * @return a direction vector of length 1
      */
-    private static Vector3D cartesianFromPolar(double radius, double phi, double theta){
-        double x = radius * sin(theta) * cos(phi);
-        double y = radius * sin(theta) * sin(phi);
-        double z = cos(theta/radius);
+    private static Vector3D sphericalToCartesian(double radius, double phi_rad, double theta_rad){
+        double x = radius * sin(theta_rad) * cos(phi_rad);
+        double y = radius * sin(theta_rad) * sin(phi_rad);
+        double z = cos(theta_rad/radius);
         return new Vector3D(x, y, z);
+    }
+
+    private static double[] cartesianToAltAz(Vector3D r){
+        double radius = r.getNorm();
+
+        double theta = Math.acos(r.getZ()/radius);
+        double phi= Math.atan2(r.getY(), r.getX());
+
+        double alt = Math.PI/2 - theta;
+        double az = phi;
+        if (az<0){
+            az += Math.PI *2;
+        }
+
+        return new double[]{alt, az};
     }
 
 
@@ -110,13 +87,13 @@ public class DirectionReconstruction {
         long eventID = parameters.get(0).eventID;
 
         List<Plane> planes = parameters.stream()
-                .map(p -> new Plane(azimuth, altitude, p))
+                .map(p -> new Plane(altitude, azimuth, p))
                 .collect(Collectors.toList());
 
-        double[] direction = estimateDirection(planes);
-
+        Vector3D direction = estimateDirection(planes);
+        double[] altAz = cartesianToAltAz(direction);
         double[] corePosition = estimateCorePosition(planes);
-        return new ReconstrucedEvent(eventID, direction, corePosition);
+        return new ReconstrucedEvent(eventID, altAz, corePosition);
     }
 
     /**
@@ -166,7 +143,7 @@ public class DirectionReconstruction {
      * @param planes the plane objects for each Telescope
      * @return an array [x, y, z]
      */
-    private static double[] estimateDirection(List<Plane> planes){
+    private static Vector3D estimateDirection(List<Plane> planes){
 
         // get all combinations of size 2 in a rather inelegant way.
         List<List<Plane>> tuples = new ArrayList<>();
@@ -204,7 +181,7 @@ public class DirectionReconstruction {
                 .filter(l -> l.getNorm() > 0)
                 .map(Vector3D::normalize);
 
-        return direction.orElse(new Vector3D(Double.NaN, Double.NaN, Double.NaN)).toArray();
+        return direction.orElse(new Vector3D(Double.NaN, Double.NaN, Double.NaN));
     }
 
 
@@ -229,21 +206,28 @@ public class DirectionReconstruction {
         //the position of the telescope on the ground
         final double[] telescopePosition;
 
-        Plane(double phi, double theta, Moments p) {
+        Plane(double alt, double az, Moments p) {
+            HorizontalCoordinate pointing = HorizontalCoordinate.fromDeg(90 - alt, az);
             this.telescopeId = p.telescopeID;
 
             TelescopeDefinition tel = MAPPING.telescopeFromId(this.telescopeId);
 
+
             //get two points on the shower axis
-            double pX = p.meanX + p.length * cos(p.delta);
-            double pY = p.meanY + p.length * sin(p.delta);
+            double pX = p.meanX + 0.1 * cos(p.delta);
+            double pY = p.meanY + 0.1 * sin(p.delta);
 
             this.weight = p.size * (p.length / p.width);
 
-            this.planeVector1 = cameraCoordinateToDirectionVector(p.meanX, p.meanY, phi, theta, tel.opticalFocalLength, 0);
-            this.planeVector2 = cameraCoordinateToDirectionVector(pX, pY, phi, theta, tel.opticalFocalLength, 0);
+            CameraCoordinate cc = new CameraCoordinate(p.meanX, p.meanY);
+            HorizontalCoordinate p1 = cc.toHorizontal(pointing, tel.opticalFocalLength);
+            this.planeVector1 = sphericalToCartesian(1, p1.getAzimuthRad(), p1.getZenithRad());
 
-            // c  = (v1 X v2) X v1
+            cc = new CameraCoordinate(pX, pY);
+            HorizontalCoordinate p2 = cc.toHorizontal(pointing, tel.opticalFocalLength);
+            this.planeVector2 = sphericalToCartesian(1, p2.getAzimuthRad(), p2.getZenithRad());
+
+
             Vector3D crossProduct = Vector3D.crossProduct(Vector3D.crossProduct(planeVector1, planeVector2), planeVector1);
             Vector3D norm = Vector3D.crossProduct(planeVector1, crossProduct);
 
@@ -254,6 +238,7 @@ public class DirectionReconstruction {
             }
 
             telescopePosition = new double[]{tel.telescopePositionX, tel.telescopePositionY, tel.telescopePositionZ};
+//            System.out.println(telescopePosition[0]+ ", " +  telescopePosition[1] + ", " + telescopePosition[2] );
         }
 
         /**

@@ -103,7 +103,7 @@ public class AnalysisTest {
                 continue;
             }
 
-            csv.append(reconstrucedEvent, prediction);
+//            csv.append(reconstrucedEvent, prediction);
         }
 
     }

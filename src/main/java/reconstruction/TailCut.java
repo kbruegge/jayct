@@ -36,9 +36,9 @@ public class TailCut{
                 .map(entry -> selectShowerFromImage(event.eventId, entry.getKey(), entry.getValue()));
     }
 
-    public static ShowerImage selectShowerFromImage(long eventId, int cameraId, double[] image) {
+    public static ShowerImage selectShowerFromImage(long eventId, int telescopeId, double[] image) {
 
-        ShowerImage showerImage = new ShowerImage(cameraId, eventId);
+        ShowerImage showerImage = new ShowerImage(telescopeId, eventId);
 
         //add the pixels over the first threshold
         for (int pixelId = 0; pixelId < image.length; pixelId++) {

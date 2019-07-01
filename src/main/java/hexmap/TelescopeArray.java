@@ -28,7 +28,7 @@ public class TelescopeArray {
 
     //see https://github.com/google/guava/wiki/ReflectionExplained for info
     private static final Type CAMERA_DEF = new TypeToken<HashMap<String, CameraGeometry>>() {}.getType();
-    private static final Type ARRAY_DEF = new TypeToken<ArrayList<TelescopeDefinition>>() {}.getType();
+    private static final Type ARRAY_DEF = new TypeToken<HashMap<Integer, TelescopeDefinition>>() {}.getType();
 
 
     /**
@@ -44,7 +44,7 @@ public class TelescopeArray {
     /**
      * List of the telescopes that make up the array.
      */
-    private final ArrayList<TelescopeDefinition> telescopes;
+    private final HashMap<Integer, TelescopeDefinition> telescopes;
 
     /**
      * Retrieve the singleton instance of the camera mapping which contains geometry data for the
@@ -68,7 +68,7 @@ public class TelescopeArray {
         Class cl = TelescopeArray.class;
 
         // initialize geometry for the cameras
-        final InputStream cameraDefs = cl.getResourceAsStream("/camera_definitions/cta_camera_definitions.json");
+        final InputStream cameraDefs = cl.getResourceAsStream("/camera_definitions/cta_camera_definition.json");
         InputStreamReader reader = new InputStreamReader(cameraDefs);
         this.cameras = gson.fromJson(reader, CAMERA_DEF);
 
@@ -78,16 +78,15 @@ public class TelescopeArray {
         this.telescopes = gson.fromJson(reader, ARRAY_DEF);
     }
 
+
     /**
-     * Get the camera geometry for the given id.
+     * Get the camera geometry for the given telescope id.
      *
      * @param telescopeId the id of the telescope to get
      * @return the camera geometry for the telescope
      */
-    public CameraGeometry cameraFromId(int telescopeId) {
-        //Watch out for the index here. Telescope ids start at 1.
-        //The mapping from telescope index to array index hence needs a -1
-        String name = telescopes.get(telescopeId - 1).cameraName;
+    public CameraGeometry cameraFromTelescopeId(int telescopeId) {
+        String name = this.telescopes.get(telescopeId).cameraName;
         return cameras.get(name);
     }
 
@@ -100,6 +99,6 @@ public class TelescopeArray {
     public TelescopeDefinition telescopeFromId(int telescopeId){
         //Telescopes ids start with one. Lists are zero based.
         //Let the bugs flow right out of this!
-        return telescopes.get(telescopeId - 1);
+        return telescopes.get(telescopeId);
     }
 }

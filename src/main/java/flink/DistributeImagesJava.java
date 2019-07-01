@@ -145,8 +145,6 @@ public class DistributeImagesJava implements Callable<Void>, Serializable {
                                 m.length,
                                 m.skewness,
                                 m.kurtosis,
-                                m.phi,
-                                m.miss,
                                 m.size,
                                 TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
                         ).createFloatVector();

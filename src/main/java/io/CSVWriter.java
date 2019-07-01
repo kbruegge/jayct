@@ -1,6 +1,7 @@
 package io;
 
 import com.google.common.base.Joiner;
+import reconstruction.containers.Moments;
 import reconstruction.containers.ReconstrucedEvent;
 
 import java.io.File;
@@ -41,35 +42,22 @@ public class CSVWriter implements Serializable{
      * @param classPrediction the prediction (aka. gammaness)
      * @throws IOException in case the file cannot not be written to.
      */
-    public void append(ReconstrucedEvent e, double classPrediction) throws IOException {
+    public void append(ReconstrucedEvent e, double classPrediction, double alt, double az, double energy) throws IOException {
 
         String s = Joiner.on(seperator).join(
                     e.eventID,
-                    e.direction.getX(),
-                    e.direction.getY(),
-                    e.direction.getZ(),
+                    e.altAz[0],
+                    e.altAz[1],
                     e.impactPosition.getX(),
                     e.impactPosition.getY(),
-                    classPrediction
+                    classPrediction,
+                    alt,
+                    az,
+                    energy
                 );
         writer.println(s);
         writer.flush();
     }
-
-    /**
-     * Same as {@link CSVWriter#append }just without throwing a checked exception
-     *
-     * @param e same as {@link CSVWriter#append}
-     * @param classPrediction same as {@link CSVWriter#append}
-     */
-    public void appendUnchecked(ReconstrucedEvent e, double classPrediction){
-        try {
-            append(e, classPrediction);
-        } catch (IOException e1) {
-            throw new RuntimeException(e1);
-        }
-    }
-
 
     /**
      * Write the given strings as a row to the CSV file. usefull for writing the header.
@@ -78,6 +66,24 @@ public class CSVWriter implements Serializable{
     public void writeHeader(String... headerKeywords) {
         String h = Joiner.on(seperator).join(headerKeywords);
         writer.println(h);
+        writer.flush();
+    }
+
+    public void append(Moments m, double energy) {
+        String s = Joiner.on(seperator).join(
+                m.eventID,
+                m.telescopeID,
+                m.length,
+                m.width,
+                m.kurtosis,
+                m.skewness,
+                m.size,
+                m.numberOfPixel,
+                m.r,
+                m.delta,
+                energy
+        );
+        writer.println(s);
         writer.flush();
     }
 }

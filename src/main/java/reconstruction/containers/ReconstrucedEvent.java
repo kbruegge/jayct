@@ -12,12 +12,12 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 public final class ReconstrucedEvent {
 
     public final long eventID;
-    public final Vector3D direction;
+    public final double[] altAz;
     public final Vector2D impactPosition;
 
     public ReconstrucedEvent(long eventID, double[] direction, double[] corePosition) {
         this.eventID = eventID;
-        this.direction = new Vector3D(direction);
+        this.altAz= direction;
         this.impactPosition = new Vector2D(corePosition);
     }
 
@@ -25,7 +25,7 @@ public final class ReconstrucedEvent {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("eventID", eventID)
-                .add("direction", direction)
+                .add("direction", altAz)
                 .add("impactPosition", impactPosition)
                 .toString();
     }

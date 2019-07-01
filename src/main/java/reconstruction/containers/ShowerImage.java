@@ -22,34 +22,34 @@ public class ShowerImage implements Serializable {
 
     public final HashSet<SignalPixel> signalPixels = new HashSet<>();
 
-    public final int cameraId;
+    public final int telescopeId;
     public final long eventId;
 
     /**
      * Each camera (in one event) can have exactly one shower object.
      *
-     * @param cameraId the id of the camera which recorded the image.
+     * @param telescopeId the id of the camera which recorded the image.
      * @param eventId  the unique event id this shower belongs to.
      */
-    public ShowerImage(int cameraId, long eventId) {
-        this.cameraId = cameraId;
+    public ShowerImage(int telescopeId, long eventId) {
+        this.telescopeId = telescopeId;
         this.eventId = eventId;
     }
 
-    /**
-     * Transform this object into a simple HashMap that can be passed to a python script.
-     */
-    public HashMap<String, Object> toMap() {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("cameraId", cameraId);
-        map.put("eventId", eventId);
-        double[] pixelWeights = new double[TelescopeArray.cta().cameraFromId(cameraId).numberOfPixel];
-        for (SignalPixel signalPixel : signalPixels) {
-            pixelWeights[signalPixel.pixelId] = signalPixel.weight;
-        }
-        map.put("image", pixelWeights);
-        return map;
-    }
+//    /**
+//     * Transform this object into a simple HashMap that can be passed to a python script.
+//     */
+//    public HashMap<String, Object> toMap() {
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("telescopeId", telescopeId);
+//        map.put("eventId", eventId);
+//        double[] pixelWeights = new double[TelescopeArray.cta().cameraFromId(telescopeId).numberOfPixel];
+//        for (SignalPixel signalPixel : signalPixels) {
+//            pixelWeights[signalPixel.pixelId] = signalPixel.weight;
+//        }
+//        map.put("image", pixelWeights);
+//        return map;
+//    }
 
     /**
      * A Shower holds a number of SignalPixels objects defined in this class. Each SignalPixel knows
@@ -59,8 +59,8 @@ public class ShowerImage implements Serializable {
         final int cameraId;
         final int pixelId;
         final public double weight;
-        final public double xPositionInMM;
-        final public double yPositionInMM;
+        final public double xPositionInM;
+        final public double yPositionInM;
         final int[] neighbours;
 
 
@@ -68,8 +68,8 @@ public class ShowerImage implements Serializable {
                             double yPositionInM, double weight, int[] neighbours) {
             this.cameraId = cameraId;
             this.pixelId = pixelId;
-            this.xPositionInMM = xPositionInM;
-            this.yPositionInMM = yPositionInM;
+            this.xPositionInM = xPositionInM;
+            this.yPositionInM = yPositionInM;
             this.weight = weight;
             this.neighbours = neighbours;
         }
@@ -77,17 +77,18 @@ public class ShowerImage implements Serializable {
         /**
          * This methid creates a SignalPixel from the ids and the weight of that pixel.
          *
-         * @param cameraId the id of the camera/telescope in which this pixel is located
+         * @param telescopeId the id of the camera/telescope in which this pixel is located
          * @param pixelId  the id of the pixel
          * @param weight   the weight of the pixel. (like estimated number of photons or similar)
          * @return an instance of a SignalPixel with the given valuess.
          */
-        static SignalPixel create(int cameraId, int pixelId, double weight) {
-            double x = mapping.cameraFromId(cameraId).pixelXPositions[pixelId];
-            double y = mapping.cameraFromId(cameraId).pixelYPositions[pixelId];
+        static SignalPixel create(int telescopeId, int pixelId, double weight) {
+            double x = mapping.cameraFromTelescopeId(telescopeId).pixelXPositions[pixelId];
+            double y = mapping.cameraFromTelescopeId(telescopeId).pixelYPositions[pixelId];
 
-            int[] neighbours = mapping.cameraFromId(cameraId).neighbours[pixelId];
-            return new SignalPixel(cameraId, pixelId, x, y, weight, neighbours);
+
+            int[] neighbours = mapping.cameraFromTelescopeId(telescopeId).neighbours[pixelId];
+            return new SignalPixel(telescopeId, pixelId, x, y, weight, neighbours);
         }
 
         @Override
@@ -109,7 +110,7 @@ public class ShowerImage implements Serializable {
     }
 
     public void addPixel(int pixelId, double weight) {
-        signalPixels.add(SignalPixel.create(cameraId, pixelId, weight));
+        signalPixels.add(SignalPixel.create(telescopeId, pixelId, weight));
     }
 
     /**
@@ -125,7 +126,7 @@ public class ShowerImage implements Serializable {
         for (SignalPixel pix : signalPixels) {
             for (int n : pix.neighbours) {
                 if (image[n] > threshold) {
-                    ids.add(SignalPixel.create(cameraId, n, image[n]));
+                    ids.add(SignalPixel.create(telescopeId, n, image[n]));
                 }
             }
         }
