@@ -42,9 +42,12 @@ public class DL3Producer implements Callable<Void> {
     String inputFolder = " ";
 
     @CommandLine.Parameters(index = "1", paramLabel = "Input File for the classifier model")
-    String modelFile = " ";
+    String clfFile = " ";
 
-    @CommandLine.Parameters(index = "2", paramLabel = "Output path for DL3")
+    @CommandLine.Parameters(index = "2", paramLabel = "Input File for the regressor model")
+    String rgrFile = " ";
+
+    @CommandLine.Parameters(index = "3", paramLabel = "Output path for DL3")
     String outputFile= " ";
 
     public static void main (String[] args) throws Exception {
@@ -67,7 +70,8 @@ public class DL3Producer implements Callable<Void> {
 
         boolean isDirectory = Files.isDirectory(file);   // Check if it's a directory
 
-        TreeEnsemblePredictor model = new TreeEnsemblePredictor(Paths.get(modelFile));
+        TreeEnsemblePredictor classifier = new TreeEnsemblePredictor(Paths.get(clfFile));
+        TreeEnsemblePredictor regressor= new TreeEnsemblePredictor(Paths.get(rgrFile));
 
         List<Path> paths = new ArrayList<>();
 
@@ -87,7 +91,8 @@ public class DL3Producer implements Callable<Void> {
                 "az",
                 "impact_x",
                 "impact_y",
-                "prediction",
+                "gamma_prediction",
+                "energy_prediction",
                 "mc_alt",
                 "mc_az",
                 "mc_energy"
@@ -103,46 +108,39 @@ public class DL3Producer implements Callable<Void> {
 
                 ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, alt, az);
 
-                double prediction = predictParticleType(moments, model);
+                double prediction = predictType(moments, classifier);
 
-                writer.append(reconstrucedEvent, prediction, event.mc.alt, event.mc.az, event.mc.energy);
+                double energyPrediction = predictEnergy(moments, regressor);
+
+                writer.append(reconstrucedEvent, prediction, energyPrediction, event.mc.alt, event.mc.az, event.mc.energy);
             }
         }
 
         return null;
     }
 
-//    private ReconstrucedEvent reconstructEvent(ImageReader.Event event){
-//
-//        List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-//        List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-//
-//        ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
-//
-//        return reconstrucedEvent;
-//    }
 
-    private double predictParticleType(List<Moments> moments, TreeEnsemblePredictor model){
-        int numberOfTriggeredTelescopes = moments.size();
-
+    private double predictType(List<Moments> moments, TreeEnsemblePredictor classifier){
         return moments.stream()
-                .map(m ->
-                        new Vectorizer().of(
-                                numberOfTriggeredTelescopes,
-                                m.numberOfPixel,
-                                m.width,
-                                m.length,
-                                m.skewness,
-                                m.kurtosis,
-                                m.size,
-                                TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                        ).createFloatVector()
+                .map(Moments::toFeatureMap
                 )
                 .mapToDouble(f ->
-                        (double) model.predictProba(f)[0]
+                        (double) classifier.predictProba(f)[1]
                 )
                 .average()
-                .orElse(0);
+                .orElse(Double.NaN);
+    }
+
+
+    private double predictEnergy(List<Moments> moments, TreeEnsemblePredictor regressor){
+        return moments.stream()
+                .map(Moments::toFeatureMap
+                )
+                .mapToDouble(f ->
+                        (double) regressor.predictProba(f)[0]
+                )
+                .average()
+                .orElse(Double.NaN);
     }
 
 }

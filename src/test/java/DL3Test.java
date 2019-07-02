@@ -23,7 +23,7 @@ public class DL3Test {
         DL3Producer p = new DL3Producer();
 
         p.inputFolder = folder.getPath();
-        p.modelFile = model.getPath();
+//        p.modelFile = model.getPath();
         p.outputFile = tempFolder.newFile().getPath();
 
         p.call();

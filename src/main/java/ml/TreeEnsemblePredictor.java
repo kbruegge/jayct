@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class can be created from a json file produced from pre-trained sklearn decision trees.
@@ -17,13 +19,15 @@ public class TreeEnsemblePredictor implements Serializable{
 
 
     private class DecisionTree implements Serializable {
+        public final String[] names;
         public final float[] thresholds;
         public final int[] attributes;
         public final int[] children_left;
         public final int[] children_right;
         public final float[][] node_distributions;
 
-        private DecisionTree(float[] thresholds, int[] attributes, int[] children_left, int[] children_right, float[][] node_distributions) {
+        private DecisionTree(String[] names, float[] thresholds, int[] attributes, int[] children_left, int[] children_right, float[][] node_distributions) {
+            this.names = names;
             this.thresholds = thresholds;
             this.attributes = attributes;
             this.children_left = children_left;
@@ -63,33 +67,43 @@ public class TreeEnsemblePredictor implements Serializable{
         trees = new GsonBuilder().create().fromJson(reader, t.getType());
     }
 
-    public float[] predictProba(float[] sample) {
-        float[] predictions = new float[trees[0].getNumberOfClasses()];
 
-        for (DecisionTree tree : trees) {
-            float[] p = predictTree(sample, tree);
-
-            predictions[argmax(p)] += 1;
+    private float[] createSampleVector(Map<String, Float> sample){
+        float[] sampleValues = new float[trees[0].names.length];
+        for (int i = 0; i < sampleValues.length; i++) {
+            sampleValues[i] = sample.get(trees[0].names[i]);
         }
-
-        for (int i = 0; i < predictions.length; i++) {
-            predictions[i] /= trees.length;
-        }
-
-        return predictions;
+        return sampleValues;
     }
 
-    /**
-     * @see TreeEnsemblePredictor#predict(float[])
-     * @param sample the samepl to predict
-     * @return the predicted class
-     */
-    public int predict(double[] sample) {
-        float s[] = new float[sample.length];
-        for (int i = 0; i < sample.length; i++) {
-            s[i] = (float) sample[i];
+    public float[] predictProba(Map<String, Float> sample) {
+        float[] sampleVector = createSampleVector(sample);
+        return predictProba(sampleVector);
+    }
+
+    public float[] predictProba(float[] sample) {
+        int nClasses = trees[0].getNumberOfClasses();
+        float[] distribution = new float[nClasses];
+        for (DecisionTree tree : trees) {
+            distribution = predictTree(sample, tree);
         }
-        return predict(s);
+
+        float[] predictions= new float[nClasses];
+        if (nClasses > 1){
+            double n = 0;
+            for (float v : distribution) {
+                n +=v;
+            }
+
+
+            for (int i = 0; i < predictions.length; i++) {
+                predictions[i] = (float) (distribution[i]/n);
+            }
+        }
+        else {
+            predictions[0] = distribution[0];
+        }
+        return predictions;
     }
 
     /**
@@ -99,9 +113,23 @@ public class TreeEnsemblePredictor implements Serializable{
      * @param sample the sample to predict the class of
      * @return return the predicted class
      */
+    public int predict(Map<String, Float> sample){
+        float[] prediction = predictProba(sample);
+        return argmax(prediction);
+    }
+
+
     public int predict(float[] sample){
         float[] prediction = predictProba(sample);
+        return argmax(prediction);
+    }
 
+    public int predict(double[] sample){
+        float[] floatSample = new float[sample.length];
+        for (int i = 0; i < sample.length; i++) {
+            floatSample[i] = (float) sample[i];
+        }
+        float[] prediction = predictProba(floatSample);
         return argmax(prediction);
     }
 

@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 public class CSVWriter implements Serializable{
     private PrintWriter writer;
-    private String seperator = ",";
+    private String separator = ",";
 
     /**
      * Create a new CSVWriter for the given File.
@@ -26,35 +26,20 @@ public class CSVWriter implements Serializable{
         writer = new PrintWriter(file);
     }
 
-    /**
-     * Appends a row to the CSV file. Containing the values for
-     *
-     *    e.eventID,
-     *    e.direction.getX(),
-     *    e.direction.getY(),
-     *    e.direction.getZ(),
-     *    e.impactPosition.getX(),
-     *    e.impactPosition.getY(),
-     *    classPrediction
-     *
-     *
-     * @param e the reconstructed event object
-     * @param classPrediction the prediction (aka. gammaness)
-     * @throws IOException in case the file cannot not be written to.
-     */
-    public void append(ReconstrucedEvent e, double classPrediction, double alt, double az, double energy) throws IOException {
+    public void append(ReconstrucedEvent e, double classPrediction, double energyPrediction, double alt, double az, double trueEnergy) throws IOException {
 
-        String s = Joiner.on(seperator).join(
+        String s = Joiner.on(separator).join(
                     e.eventID,
                     e.altAz[0],
                     e.altAz[1],
                     e.impactPosition.getX(),
                     e.impactPosition.getY(),
                     classPrediction,
+                    energyPrediction,
                     alt,
                     az,
-                    energy
-                );
+                    trueEnergy
+        );
         writer.println(s);
         writer.flush();
     }
@@ -64,13 +49,13 @@ public class CSVWriter implements Serializable{
      * @param headerKeywords the strings to write into the row.
      */
     public void writeHeader(String... headerKeywords) {
-        String h = Joiner.on(seperator).join(headerKeywords);
+        String h = Joiner.on(separator).join(headerKeywords);
         writer.println(h);
         writer.flush();
     }
 
-    public void append(Moments m, double energy) {
-        String s = Joiner.on(seperator).join(
+    public void append(Moments m, double trueEnergy) {
+        String s = Joiner.on(separator).join(
                 m.eventID,
                 m.telescopeID,
                 m.length,
@@ -81,7 +66,7 @@ public class CSVWriter implements Serializable{
                 m.numberOfPixel,
                 m.r,
                 m.delta,
-                energy
+                trueEnergy
         );
         writer.println(s);
         writer.flush();

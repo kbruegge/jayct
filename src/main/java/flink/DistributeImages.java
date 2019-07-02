@@ -7,6 +7,7 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -22,10 +23,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import hexmap.TelescopeArray;
 import io.ImageReader;
 import ml.TreeEnsemblePredictor;
-import ml.Vectorizer;
 import picocli.CommandLine;
 import reconstruction.DirectionReconstruction;
 import reconstruction.HillasParametrization;
@@ -39,7 +38,7 @@ import reconstruction.containers.ShowerImage;
  * Testing the apache flink framework Created by mackaiver on 25/09/17.
  */
 @CommandLine.Command(name = "Test Flink", description = "Executes CTA analysis with Apache Flink")
-public class DistributeImagesJava implements Callable<Void>, Serializable {
+public class DistributeImages implements Callable<Void>, Serializable {
 
 
     @CommandLine.Option(names = {"-p", "--source-parallelism"})
@@ -57,16 +56,21 @@ public class DistributeImagesJava implements Callable<Void>, Serializable {
     @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Displays this help message and quits.")
     boolean helpRequested = false;
 
+
     @CommandLine.Parameters(index = "0", paramLabel = "Input File for the images")
     String inputFile = " ";
 
     @CommandLine.Parameters(index = "1", paramLabel = "Input File for the classifier model")
-    String modelFile = " ";
+    String clfFile = " ";
+
+    @CommandLine.Parameters(index = "2", paramLabel = "Input File for the regressor model")
+    String rgrFile = " ";
+
 
 
     public static void main(String[] args) throws Exception {
 
-        CommandLine.call(new DistributeImagesJava(), System.out, args);
+        CommandLine.call(new DistributeImages(), System.out, args);
 
     }
 
@@ -79,7 +83,7 @@ public class DistributeImagesJava implements Callable<Void>, Serializable {
 
 
         System.out.println("Reading data from file: " + inputFile);
-        System.out.println("Reading classifier from file: " + modelFile);
+        System.out.println("Reading classifier from file: " + clfFile);
 
 
         StreamExecutionEnvironment env = flinkPlan();
@@ -124,55 +128,46 @@ public class DistributeImagesJava implements Callable<Void>, Serializable {
                         return value.f0.numberOfPixel > 4;
                     }
                 })
-                .map(new RichMapFunction<Tuple2<Moments, Integer>, Tuple2<Moments, Double>>() {
+                .map(new RichMapFunction<Tuple2<Moments, Integer>, Tuple3<Moments, Double, Double>>() {
 
-                    private TreeEnsemblePredictor model;
+                    private TreeEnsemblePredictor classifier;
+                    private TreeEnsemblePredictor regressor;
 
                     @Override
                     public void open(Configuration parameters) throws Exception {
                         super.open(parameters);
-                        this.model = new TreeEnsemblePredictor(Paths.get(modelFile));
+                        this.classifier = new TreeEnsemblePredictor(Paths.get(clfFile));
+                        this.regressor= new TreeEnsemblePredictor(Paths.get(rgrFile));
                     }
 
                     @Override
-                    public Tuple2<Moments, Double> map(Tuple2<Moments, Integer> value) throws Exception {
-
+                    public Tuple3<Moments, Double, Double> map(Tuple2<Moments, Integer> value) throws Exception {
                         Moments m = value.f0;
-                        float[] vector = new Vectorizer().of(
-                                value.f1,
-                                m.numberOfPixel,
-                                m.width,
-                                m.length,
-                                m.skewness,
-                                m.kurtosis,
-                                m.size,
-                                TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                        ).createFloatVector();
-
-                        float p = model.predictProba(vector)[0];
-                        return Tuple2.of(m, (double) p);
+                        double p = classifier.predictProba(m.toFeatureMap())[1];
+                        double energy = regressor.predictProba(m.toFeatureMap())[0];
+                        return Tuple3.of(m, p, energy);
                     }
                 })
-                .keyBy(new KeySelector<Tuple2<Moments, Double>, Long>() {
+                .keyBy(new KeySelector<Tuple3<Moments, Double, Double>, Long>() {
                     @Override
-                    public Long getKey(Tuple2<Moments, Double> value) throws Exception {
+                    public Long getKey(Tuple3<Moments, Double, Double> value) throws Exception {
                         return value.f0.eventID;
                     }
                 })
                 .timeWindow(Time.seconds(windowSize))
-                .aggregate(new AggregateFunction<Tuple2<Moments, Double>, ArrayList<Tuple2<Moments, Double>>, Tuple2<ReconstrucedEvent, Double>>() {
+                .aggregate(new AggregateFunction<Tuple3<Moments, Double, Double>, ArrayList<Tuple3<Moments, Double, Double>>, Tuple2<ReconstrucedEvent, Double>>() {
                     @Override
-                    public ArrayList<Tuple2<Moments, Double>> createAccumulator() {
+                    public ArrayList<Tuple3<Moments, Double, Double>> createAccumulator() {
                         return new ArrayList<>();
                     }
 
                     @Override
-                    public void add(Tuple2<Moments, Double> value, ArrayList<Tuple2<Moments, Double>> accumulator) {
+                    public void add(Tuple3<Moments, Double, Double> value, ArrayList<Tuple3<Moments, Double, Double>> accumulator) {
                         accumulator.add(value);
                     }
 
                     @Override
-                    public Tuple2<ReconstrucedEvent, Double> getResult(ArrayList<Tuple2<Moments, Double>> accumulator) {
+                    public Tuple2<ReconstrucedEvent, Double> getResult(ArrayList<Tuple3<Moments, Double, Double>> accumulator) {
                         ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(accumulator.stream().map(v -> v.f0).collect(Collectors.toList()), 1, 2);
                         double avg = accumulator.stream().mapToDouble(v -> v.f1).average().orElse(0);
 
@@ -180,8 +175,8 @@ public class DistributeImagesJava implements Callable<Void>, Serializable {
                     }
 
                     @Override
-                    public ArrayList<Tuple2<Moments, Double>> merge(ArrayList<Tuple2<Moments, Double>> a, ArrayList<Tuple2<Moments, Double>> b) {
-                        ArrayList<Tuple2<Moments, Double>> c = new ArrayList<>();
+                    public ArrayList<Tuple3<Moments, Double, Double>> merge(ArrayList<Tuple3<Moments, Double , Double>> a, ArrayList<Tuple3<Moments, Double, Double>> b) {
+                        ArrayList<Tuple3<Moments, Double, Double>> c = new ArrayList<>();
                         c.addAll(a);
                         c.addAll(b);
                         return c;

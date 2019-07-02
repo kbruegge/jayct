@@ -1,6 +1,7 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '2.0.1'
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'java'
 }
 
@@ -10,7 +11,7 @@ allprojects {
     apply plugin: 'idea'
 
     group 'de.sfb876'
-    version '0.1.0-SNAPSHOT'
+    version '0.2.0-SNAPSHOT'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -39,10 +40,10 @@ dependencies {
 shadowJar {
     baseName = 'jayct'
     manifest {
-        attributes 'Main-Class': 'flink.Test'
+        attributes 'Main-Class': 'flink.DistributeEvents'
     }
 
-    transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
+    transform(AppendingTransformer) {
         resource = 'reference.conf'
     }
 

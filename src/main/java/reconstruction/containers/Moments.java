@@ -29,20 +29,18 @@ public class Moments {
         this.size = size;
     }
 
-    public HashMap<String, Object> toMap(){
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("eventID", eventID);
-        map.put("telescopeID", telescopeID);
-        map.put("numberOfPixel", numberOfPixel);
-        map.put("width", width);
-        map.put("length", length);
-        map.put("delta", delta);
-        map.put("skewness", skewness);
-        map.put("kurtosis", kurtosis);
-        map.put("r", r);
-        map.put("meanX", meanX);
-        map.put("meanY", meanY);
-        map.put("size", size);
+    public HashMap<String, Float> toFeatureMap(){
+        HashMap<String, Float> map = new HashMap<>();
+        map.put("number_of_pixel", (float) numberOfPixel);
+        map.put("width", (float) width);
+        map.put("length", (float) length);
+        map.put("delta", (float) delta);
+        map.put("skewness", (float) skewness);
+        map.put("kurtosis", (float) kurtosis);
+        map.put("r", (float) r);
+        map.put("x", (float) meanX);
+        map.put("y", (float) meanY);
+        map.put("size", (float) size);
         return map;
     }
 

@@ -5,7 +5,7 @@ import io.ImageReader;
 import ml.TreeEnsemblePredictor;
 import ml.Vectorizer;
 import org.apache.flink.api.common.functions.RichMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.*;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -19,6 +19,7 @@ import reconstruction.containers.ShowerImage;
 
 import java.io.Serializable;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -47,9 +48,10 @@ public class DistributeEvents implements Callable<Void>, Serializable {
     String inputFile = " ";
 
     @CommandLine.Parameters(index = "1", paramLabel = "Input File for the classifier model")
-    String modelFile = " ";
+    String clfFile = " ";
 
-
+    @CommandLine.Parameters(index = "2", paramLabel = "Input File for the regressor model")
+    String rgrFile = " ";
 
     public static void main (String[] args) throws Exception {
 
@@ -65,7 +67,8 @@ public class DistributeEvents implements Callable<Void>, Serializable {
         }
 
         System.out.println("Reading data from file: " + inputFile );
-        System.out.println("Reading classifier from file: " +  modelFile);
+        System.out.println("Reading classifier from file: " +  clfFile);
+        System.out.println("Reading regressor  file: " +  rgrFile);
 
         StreamExecutionEnvironment env = flinkPlan();
         env.execute();
@@ -79,53 +82,61 @@ public class DistributeEvents implements Callable<Void>, Serializable {
 
         env.addSource(new InfiniteEventSource(inputFile))
             .setParallelism( sourceParallelism)
-            .map(new RichMapFunction<ImageReader.Event, Tuple2<ReconstrucedEvent, Double>>() {
+            .map(new RichMapFunction<ImageReader.Event, Tuple5<Double, Double, Double, Double, LocalDateTime>>() {
 
-                private TreeEnsemblePredictor model;
+                private TreeEnsemblePredictor classifier;
+                private TreeEnsemblePredictor regressor;
 
                 @Override
                 public void open(Configuration parameters) throws Exception {
                     super.open(parameters);
-                    this.model = new TreeEnsemblePredictor(Paths.get(modelFile));
+                    this.classifier = new TreeEnsemblePredictor(Paths.get(clfFile));
+                    this.regressor= new TreeEnsemblePredictor(Paths.get(rgrFile));
                 }
 
                 @Override
-                public Tuple2<ReconstrucedEvent, Double> map(ImageReader.Event event) throws Exception {
+                public Tuple5<Double, Double, Double, Double, LocalDateTime> map(ImageReader.Event event) throws Exception {
 
                     List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
                     List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
 
-                    int numberOfTelescopes = moments.size();
 
-                    double prediction = moments.stream()
-                            .map(m ->
-                                    new Vectorizer().of(
-                                            numberOfTelescopes,
-                                            m.numberOfPixel,
-                                            m.width,
-                                            m.length,
-                                            m.skewness,
-                                            m.kurtosis,
-                                            m.size,
-                                            TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                                    ).createFloatVector()
-                            )
-                            .mapToDouble(f ->
-                                    (double) model.predictProba(f)[0]
-                            )
-                            .average()
-                            .orElse(0);
+                    double prediction = predictType(moments, classifier);
+                    double energyPrediction = predictEnergy(moments, regressor);
 
                     ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
 
-                    return Tuple2.of(reconstrucedEvent, prediction);
+                    return Tuple5.of(reconstrucedEvent.altAz[0], reconstrucedEvent.altAz[1], prediction, energyPrediction, LocalDateTime.now());
                 }
             })
             .setParallelism(mapParallelism)
             .startNewChain()
             .writeAsCsv("./output.csv", FileSystem.WriteMode.OVERWRITE)
-            .setParallelism( sinkParallelism);
+            .setParallelism(sinkParallelism);
 
         return env;
     }
+    private double predictType(List<Moments> moments, TreeEnsemblePredictor classifier){
+        return moments.stream()
+                .map(Moments::toFeatureMap
+                )
+                .mapToDouble(f ->
+                        (double) classifier.predictProba(f)[1]
+                )
+                .average()
+                .orElse(Double.NaN);
+    }
+
+
+    private double predictEnergy(List<Moments> moments, TreeEnsemblePredictor regressor){
+        return moments.stream()
+                .map(Moments::toFeatureMap
+                )
+                .mapToDouble(f ->
+                        (double) regressor.predictProba(f)[0]
+                )
+                .average()
+                .orElse(Double.NaN);
+    }
 }
+

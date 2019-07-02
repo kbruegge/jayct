@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -48,65 +49,12 @@ public class AnalysisTest {
 
             ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
 
-            if (reconstrucedEvent.direction.isNaN()){
-                continue;
-            }
-
-            assertTrue(reconstrucedEvent.direction.getZ() > 0);
+            assertEquals(2, reconstrucedEvent.altAz.length);
         }
 
     }
 
 
-    @Test
-    public void testFullChain() throws IOException, URISyntaxException {
-        URL url = ImageReader.class.getResource("/data/images.json.gz");
-        URL predictorURL = ImageReader.class.getResource("/classifier.json");
-
-        TemporaryFolder folder = new TemporaryFolder();
-        folder.create();
-
-        CSVWriter csv = new CSVWriter(folder.newFile());
-
-        TreeEnsemblePredictor predictor = new TreeEnsemblePredictor(Paths.get(predictorURL.toURI()));
-        ImageReader events = ImageReader.fromURL(url);
-
-
-        for (ImageReader.Event event : events) {
-            List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-            List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-
-            double prediction = moments.stream()
-                    .map(m ->
-                            new Vectorizer().of(
-                                    event.array.numTriggeredTelescopes,
-                                    m.numberOfPixel,
-                                    m.width,
-                                    m.length,
-                                    m.skewness,
-                                    m.kurtosis,
-                                    m.phi,
-                                    m.miss,
-                                    m.size,
-                                    TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                            ).createFloatVector()
-                    )
-                    .mapToDouble(f ->
-                            (double) predictor.predictProba(f)[0]
-                    )
-                    .average()
-                    .orElse(0);
-
-            ReconstrucedEvent reconstrucedEvent = DirectionReconstruction.fromMoments(moments, event.mc.alt, event.mc.az);
-
-            if (reconstrucedEvent.direction.isNaN()){
-                continue;
-            }
-
-//            csv.append(reconstrucedEvent, prediction);
-        }
-
-    }
 
     @Test
     public void testMomentsStream() throws IOException {
@@ -127,96 +75,6 @@ public class AnalysisTest {
             assertTrue(m.length > m.width);
         });
 
-    }
-
-    @Test
-    public void testPrediction() throws IOException, URISyntaxException {
-        ImageReader events = ImageReader.fromURL(ImageReader.class.getResource("/data/images.json.gz"));
-
-        URL predictorURL = ImageReader.class.getResource("/classifier.json");
-
-        TreeEnsemblePredictor predictor = new TreeEnsemblePredictor(Paths.get(predictorURL.toURI()));
-
-        for (ImageReader.Event event : events) {
-            List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-            List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-
-            int numberOfTelescopes = moments.size();
-
-            double prediction = moments.stream()
-                    .map(m ->
-                            new Vectorizer().of(
-                                    numberOfTelescopes,
-                                    m.numberOfPixel,
-                                    m.width,
-                                    m.length,
-                                    m.skewness,
-                                    m.kurtosis,
-                                    m.phi,
-                                    m.miss,
-                                    m.size,
-                                    TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                            ).createFloatVector()
-                    )
-                    .mapToDouble(f ->
-                            (double) predictor.predictProba(f)[0]
-                    )
-                    .average()
-                    .orElse(0);
-        }
-
-    }
-
-    @Test
-    public void testParallelStream() throws IOException, URISyntaxException {
-        ImageReader events = ImageReader.fromURL(ImageReader.class.getResource("/data/images.json.gz"));
-        List<ImageReader.Event> eventList = events.stream().collect(toList());
-
-        URL predictorURL = ImageReader.class.getResource("/classifier.json");
-        TreeEnsemblePredictor predictor = new TreeEnsemblePredictor(Paths.get(predictorURL.toURI()));
-
-        Iterable<ImageReader.Event> cycle = Iterables.cycle(eventList);
-
-
-        long N = 10000;
-        Stopwatch stopwatch = Stopwatch.createStarted();
-
-        List<Double> predictions = StreamSupport.stream(cycle.spliterator(), true)
-                .limit(N)
-                .map(event -> {
-                    List<ShowerImage> showerImages = TailCut.onImagesInEvent(event);
-                    List<Moments> moments = HillasParametrization.fromShowerImages(showerImages);
-
-                    int numberOfTelescopes = moments.size();
-
-                    return moments.stream()
-                            .map(m ->
-                                    new Vectorizer().of(
-                                            numberOfTelescopes,
-                                            m.numberOfPixel,
-                                            m.width,
-                                            m.length,
-                                            m.skewness,
-                                            m.kurtosis,
-                                            m.phi,
-                                            m.miss,
-                                            m.size,
-                                            TelescopeArray.cta().telescopeFromId(m.telescopeID).telescopeType.ordinal()
-                                    ).createFloatVector()
-                            )
-                            .mapToDouble(f ->
-                                    (double) predictor.predictProba(f)[0]
-                            )
-                            .average()
-                            .orElse(0);
-
-
-                })
-                .collect(toList());
-
-
-        Duration duration = stopwatch.elapsed();
-        log.info("Reconstruced {} event in {} seconds. Thats {} events per second", N, duration.getSeconds(), N/duration.getSeconds());
     }
 
 }
